@@ -28,6 +28,9 @@ int		main()
 {
 	vector<int> v(5, 42);
 
+	v.debug();
+
+	v.reserve(10);
 
 	v.debug();
 

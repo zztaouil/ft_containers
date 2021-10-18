@@ -43,7 +43,7 @@ class	vector{
 					_allocator.destroy(_data+i);
 				}
 			}
-			_allocator.deallocate(_data, _size);
+			_allocator.deallocate(_data, _capacity);
 		}
 		vector &operator=(vector const &rhs){
 			if (this != &rhs){
@@ -77,18 +77,23 @@ class	vector{
 				return true;
 			return false;
 		}
-		void	reserve(size_t n);
+		void	reserve(size_type n){
+			if (n > _capacity){
+				T	*tmp = _allocator.allocate(n);
+				for (int i=0;i < _size; i++){
+					_allocator.construct(tmp+i, _data[i]);
+					_allocator.destroy(_data + i);
+				}
+				_allocator.deallocate(_data, _capacity);
+				_capacity = n;
+				_data = tmp;
+			}
+		}
 
 		void resize (size_type n, value_type val = value_type()){
 			if (n < _size){
-
-			}
-		}
-		void	resize(size_t n){
-			if (n < _size){
 				T	*tmp = _allocator.allocate(n);
-				int i=0;
-				for (i; i<n; i++){
+				for (int i=0; i<n; i++){
 					_allocator.construct(tmp+i, _data[i]);
 					_allocator.destroy(&_data[i]);
 				}
@@ -98,7 +103,30 @@ class	vector{
 				_data = tmp;
 			}
 			else if (n > _size){
-				
+				T *tmp = _allocator.allocate(n);
+				int i=0;
+				while (i < _size){
+					_allocator.construct(tmp+i, _data[i]);
+					_allocator.destroy(_data+i);
+					i++;
+				}
+				_allocator.deallocate(_data, _capacity);
+				_capacity = n;
+				_size = n;
+				if (!val){
+					while (i < n)
+					{
+						_allocator.construct(tmp+i, NULL);
+						i++;
+					}
+				}else{
+					while (i < n)
+					{
+						_allocator.construct(tmp+i, val);
+						i++;
+					}
+				}
+				_data = tmp;
 			}
 		}
 
