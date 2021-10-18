@@ -2,13 +2,24 @@
 
 int		main()
 {
-	int t[] = {1, 2, 3, 4, 5};
+	char t[] = {'t', 'e', 's', 't', '!'};
 
-	vector<int>	v(t, t+5);
+	vector<char>	v(t, t+5);
 
-	for (int i = 0; i < 5; i++){
-		std::cout << v.at(i) << std::endl; 
-	}
+
+	v.push_back(42);
+	v.push_back(43);
+	v.push_back(43);
+	v.push_back(43);
+	v.push_back(43);
+	v.push_back(43);
+	v.push_back(43);
+
+
+
+
+
+	v.debug();
 
 	return 0;
 }
