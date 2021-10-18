@@ -1,6 +1,6 @@
 #include "vector.hpp"
 
-int		main()
+/* int		main()
 {
 	char t[] = {'t', 'e', 's', 't', '!'};
 
@@ -22,4 +22,30 @@ int		main()
 	v.debug();
 
 	return 0;
+} */
+
+int		main()
+{
+	vector<int> v(5, 42);
+
+
+	v.debug();
+
+	return 0;
 }
+
+/*
+
+if n < _size
+	shrink to [0, n]
+
+if n > _capacity
+	realloc and fill
+
+if n > _size and n < _capacity
+	enlarge to [0, n]
+	val to the rest 
+
+
+
+*/
