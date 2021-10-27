@@ -1,61 +1,26 @@
-#include "vector.hpp"
-
-/* int		main()
-{
-	char t[] = {'t', 'e', 's', 't', '!'};
-
-	vector<char>	v(t, t+5);
-
-
-	v.push_back(42);
-	v.push_back(43);
-	v.push_back(43);
-	v.push_back(43);
-	v.push_back(43);
-	v.push_back(43);
-	v.push_back(43);
-
-
-
-
-
-	v.debug();
-
-	return 0;
-} */
-/*
-int		main()
-{
-	vector<int> v(5, 42);
-
-	v.debug();
-
-	v.reserve(10);
-
-	v.debug();
-
-	return 0;
-}*/
-
-/*
-
-if n < _size
-	shrink to [0, n]
-
-if n > _capacity
-	realloc and fill
-
-if n > _size and n < _capacity
-	enlarge to [0, n]
-	val to the rest 
-
-
-
-*/
+//#include "vector.hpp"
 #include "iterators.hpp"
+#include <vector>
 
+using namespace std;
 int 	main()
 {
-	int arr[] = {1, 2, 4, 5, ,6};
-	Iterator<int> it;
+	int arr[] = {1, 2, 4, 5, 6};
+	Iterator<int> it1;
+	Iterator<int> it2;
+	it1 = arr;
+	it2 = arr+1;
+
+	//cout << it << endl << endl;
+	//cout <<(bool )(it1 == it2)  << endl << endl;
+
+	vector<int> A;
+	for (int i=0;i<50;i++)
+		A.push_back(i);
+	vector<int>::iterator it=A.begin();
+
+	cout << it->(3) << endl;
+	
+
+	return 0;
 }
