@@ -23,7 +23,7 @@
 
 	return 0;
 } */
-
+/*
 int		main()
 {
 	vector<int> v(5, 42);
@@ -35,7 +35,7 @@ int		main()
 	v.debug();
 
 	return 0;
-}
+}*/
 
 /*
 
@@ -52,3 +52,10 @@ if n > _size and n < _capacity
 
 
 */
+#include "iterators.hpp"
+
+int 	main()
+{
+	int arr[] = {1, 2, 4, 5, ,6};
+	Iterator<int> it;
+}

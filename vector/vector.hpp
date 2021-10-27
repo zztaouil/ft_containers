@@ -10,10 +10,17 @@
 template <class T, class Allocator = std::allocator<T> >
 class	vector{
 	public:
-		typedef Allocator	allocator_type;
 		typedef T			value_type;
+		typedef Allocator	allocator_type;
+		typedef typename allocator_type::reference reference;
+		typedef typename allocator_type::const_reference const_reference;
+		typedef typename allocator_type::pointer pointer;
+		typedef typename allocator_type::const_pointer const_pointer;	
+// convertible to const_iterator
+		typedef Iterator<value_type> iterator;
+		typedef Iterator<const value_type> const_iterator;
 		typedef size_t		size_type;
-
+		
 
 		explicit vector (const allocator_type& alloc = allocator_type()) : _capacity(DEFAULT_CAPACITY){
 			_data = _allocator.allocate(DEFAULT_CAPACITY);
