@@ -1,6 +1,8 @@
 //#include "vector.hpp"
 #include "iterators.hpp"
 #include <vector>
+#include <string>
+#include <iterator>
 
 using namespace std;
 int 	main()
@@ -11,16 +13,13 @@ int 	main()
 	it1 = arr;
 	it2 = arr+1;
 
-	//cout << it << endl << endl;
-	//cout <<(bool )(it1 == it2)  << endl << endl;
-
-	vector<int> A;
-	for (int i=0;i<50;i++)
-		A.push_back(i);
-	vector<int>::iterator it=A.begin();
-
-	cout << it->(3) << endl;
+	cout << it1 << endl;
+	cout <<(bool )(it1 == it2)  << endl << endl;
 	
-
+	vector<string> A;
+	string str = "test123";
+	A.push_back(str);
+	vector<string>::iterator it4 = A.begin();
+	cout << it4->length() << endl;
 	return 0;
 }
