@@ -21,5 +21,8 @@ int 	main()
 	A.push_back(str);
 	vector<string>::iterator it4 = A.begin();
 	cout << it4->length() << endl;
+	*it4 = "you fucking idiot";
+	cout << it4->length() << endl;
+
 	return 0;
 }
