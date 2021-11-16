@@ -173,7 +173,26 @@ namespace ft{
 				}
 
 				// MODIFIERS	
-				void	assign(size_t n, T const &val);
+				void	assign(size_t n,const value_type &val){
+					for (int i=0; i<_size; i++)
+						_allocator.destroy(_data[i]);
+					_allocator.deallocate(_data, _capacity);
+					_size = 0;
+					_capacity = 0;
+					_allocator.allocate(n);
+					for (int i=0; i<n; i++)
+						_data[_size++] = val;
+				}
+				void	assign(iterator first, iterator last){
+					for (int i=0; i<_size; i++)
+						_allocator.destroy(_data[i]);
+					_allocator.deallocate(_data, _capacity);
+					_size = 0;
+					_capacity = 0;
+					for (iterator it = first; it != last; it++)
+						_data[_size++] = *it;
+
+				}
 				void	push_back(T const &val){
 					if (_size == _capacity){
 						T	*tmp = _allocator.allocate(_capacity * 2);
