@@ -145,17 +145,31 @@ namespace ft{
 				}
 
 				// ELEMENT ACCESS
-				T		&operator[](size_t n) const{
+				//
+				// all of this shit needs protection! check if n is valid.
+				const_reference	operator[](size_t n) const{
 					return _data[n];
 				}
-				T		&at(size_t idx) const{
+				reference	operator[](size_t n){
+					return _data[n];
+				}
+				const_reference	at(size_t idx) const{
 					return _data[idx];
 				}
-				T		&front(void) const{
-					return _data[_size-1];
+				reference	at(size_t idx){
+					return _data[idx];
 				}
-				T		&back(void) const{
+				const_reference	front(void) const{
 					return _data[0];
+				}
+				reference	front(void){
+					return _data[0];
+				}
+				const_reference	back(void) const{
+					return _data[_size - 1];
+				}
+				reference	back(void){
+					return _data[_size - 1];
 				}
 
 				// MODIFIERS	
@@ -174,7 +188,10 @@ namespace ft{
 					_allocator.construct(_data+_size, val);
 					_size++;
 				}
-				void	pop_back(void);
+				void	pop_back(void){
+					_allocator.destroy(_data[_size - 1]);
+					_size -= 1;
+				}
 
 				// DEBUG
 
