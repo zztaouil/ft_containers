@@ -3,121 +3,141 @@
 
 # include <cstddef>
 # include <iostream>
-
+# include <iterator>
 
 template <class T>
+class Iterator : public std::iterator<std::random_access_iterator_tag, T>{
 
-class Iterator{
-public:
-	typedef	 T	 	value_type;
-	typedef	 T*	 	pointer;
-	typedef	 T const *	const_pointer;
-	typedef	 T&	 	reference;
-	typedef	ptrdiff_t	distance;
+	typedef	typename std::iterator<std::random_access_iterator_tag, T>::value_type		value_type;
+	typedef	typename std::iterator<std::random_access_iterator_tag, T>::pointer		pointer;
+	typedef	const pointer	const_pointer;
+	typedef	typename std::iterator<std::random_access_iterator_tag, T>::reference		reference;
+	typedef	typename std::iterator<std::random_access_iterator_tag, T>::difference_type	difference_type;
 
-//Is default-constructible, copy-constructible, copy-assignable, destructible i.e (X a; X b(a); b = a;)
-	Iterator(void);
-	Iterator(Iterator const &obj);
-	~Iterator(void);
-	Iterator &operator = (pointer addr);
-	Iterator &operator = (Iterator const &rhs);
-//Can be compared for equivalence using the equality/inequality operators i.e (a == b; a != b;)
-	bool operator == (Iterator const &rhs);
-	bool operator != (Iterator const &rhs);
-//Can be dereferenced as an rvalue i.e (*a; a->m;)
-//For mutable iterators (non-constant) i.e (*a = t)
-	pointer operator -> (void);
-	reference operator * (void);
-//Can be incremented i.e (++a, a++, *a++)
-	Iterator operator ++ (int);
-	Iterator &operator ++ (void);
-//Getter for _ptr private member
-	const_pointer get_ptr(void) const;
-	
 private:
 	pointer _ptr;
-};
-// Implementations
-template<class T>
-Iterator<T>::Iterator(void)
-:_ptr(nullptr){}
 
-template<class T>
-Iterator<T>::~Iterator(void)
-{}
-
-template<class T>
-Iterator<T>::Iterator(Iterator const &obj)
-{
-	*this = obj;
-}
-
-template<class T>
-Iterator<T> &Iterator<T>::operator=(Iterator const &rhs)
-{
-	if (this != &rhs){
-		this->_ptr = rhs.get_ptr();
+public:
+	//Is default-constructible, copy-constructible, copy-assignable, destructible i.e (X a; X b(a); b = a;)
+	Iterator(pointer ptr) : _ptr(ptr){}
+	Iterator(void) : _ptr(nullptr){}
+	Iterator(Iterator const &obj) { *this = obj; }
+	~Iterator(void){}
+	Iterator &operator = (pointer addr){_ptr = addr; return *this; }
+	Iterator &operator = (Iterator const &rhs) {
+		if (this != &rhs){
+			_ptr = rhs.get_ptr();
+		}
+		return *this;
 	}
-	return *this;
-}
 
-template<class T>
-T const  *Iterator<T>::get_ptr(void) const
-{
-	return _ptr;
-}
+	//Can be compared for equivalence using the equality/inequality operators i.e (a == b; a != b;)
+	bool operator == (Iterator const &rhs){ return _ptr == rhs.get_ptr(); }
+	bool operator != (Iterator const &rhs){ return _ptr != rhs.get_ptr(); }
 
-template<class T>
-T &Iterator<T>::operator * (void)
-{
-	return *_ptr;
-}
+	//Can be dereferenced as an rvalue i.e (*a; a->m;)
+	//For mutable iterators (non-constant) i.e (*a = t)
+	pointer operator -> (void){ return _ptr; }
+	reference operator * (void){ return *_ptr; }
 
-template<class T>
-T *Iterator<T>::operator -> (void)
-{
-	return _ptr;
-}
+	//Can be incremented i.e (++a, a++, *a++)
+	Iterator operator ++ (int){
+		Iterator<T> tmp = *this;
+		this->_ptr++;
+		return tmp;
+	}
+	Iterator &operator ++ (void){
+		this->_ptr++;
+		return *this;
+	}
 
-template<class T>
-Iterator<T> &Iterator<T>::operator = (T *addr)
-{
-	this->_ptr = addr;
-	return *this;
-}
+	//Can be decremented
+	Iterator operator -- (int){
+		Iterator<T> tmp = *this;
+		this->_ptr--;
+		return tmp;
+	}
+	Iterator &operator -- (void){
+		this->_ptr--;
+		return *this;
+	}
 
-template<class T>
-bool Iterator<T>::operator == (Iterator<T> const &rhs)
-{
-	return this->_ptr == rhs.get_ptr();
-}
+	//Arithmetic overload
+	Iterator operator + (difference_type n){
+		_ptr += n;
+		return *this;
+	}
+	Iterator operator - (difference_type n){
+		_ptr -= n;
+		return *this;
+	}
 
-template<class T>
-bool Iterator<T>::operator != (Iterator<T> const &rhs)
-{
-	return this->_ptr != rhs.get_ptr();
-}
+	//Compound assignment operators += -=
+	Iterator operator += (difference_type n){
+		_ptr += n;
+		return *this;
+	}
+	Iterator operator -= (difference_type n){
+		_ptr -= n;
+		return *this;
+	}
 
-template<class T>
-Iterator<T> &Iterator<T>::operator ++ (void)
-{
-	this->_ptr++;
-	return *this;
-}
+	// offset dereference operator []
+	value_type operator [] (difference_type n){
+		return _ptr[n];	
+	}
 
+	//Getter for _ptr private member
+	pointer get_ptr(void) const{
+		return _ptr;
+	}
+};
+
+//Arithmetic overloads
 template<class T>
-Iterator<T> Iterator<T>::operator ++ (int)
+Iterator<T>	operator + (typename std::iterator<std::random_access_iterator_tag, T>::difference_type n, Iterator<T> const &rhs)
 {
-	Iterator<T> tmp = *this;
-	this->_ptr++;
+	Iterator<T> tmp;
+	tmp = n + rhs.get_ptr();
 	return tmp;
 }
 
 template<class T>
+typename std::iterator<std::random_access_iterator_tag, T>::difference_type	operator - (Iterator<T> const &lhs, Iterator<T> const &rhs)
+{
+	return lhs.get_ptr() - rhs.get_ptr();
+}
+
+//Comparison
+template<class T>
+bool	operator < (Iterator<T> const &lhs, Iterator<T> const &rhs)
+{
+	return lhs.get_ptr() < rhs.get_ptr();
+}
+
+template<class T>
+bool	operator > (Iterator<T> const &lhs, Iterator<T> const &rhs)
+{
+	return lhs.get_ptr() > rhs.get_ptr();
+}
+
+template<class T>
+bool	operator <= (Iterator<T> const &lhs, Iterator<T> const &rhs)
+{
+	return lhs.get_ptr() <= rhs.get_ptr();
+}
+
+template<class T>
+bool	operator >= (Iterator<T> const &lhs, Iterator<T> const &rhs)
+{
+	return lhs.get_ptr() >= rhs.get_ptr();
+}
+// non memeber overloads
+template<class T>
 std::ostream	&operator << (std::ostream &o, Iterator<T> const &obj)
 {
 	o << "Address: " << std::hex << obj.get_ptr() << std::endl;
-	//o << "Value: " << *obj.get_ptr() << std::endl;
+	o << "Value: " << *obj.get_ptr() << std::endl;
 	return o;
 }
 #endif
