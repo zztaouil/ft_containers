@@ -211,14 +211,9 @@ namespace ft{
 					_allocator.destroy(_data[_size - 1]);
 					_size -= 1;
 				}
-				iterator 	insert (iterator position, value_type const &val);
-				void		insert(iterator position, size_type n, value_type const &val);
-				void		insert (iterator position, iterator first, iterator list);
-				iterator 	erase(iterator position);
-				iterator 	erase(iteartor first, iterator last);
-				void		swap(vector &x);
-				void		clear();
-				
+				iterator insert (iterator position, value_type const &val);
+				void	insert(iterator position, size_type n, value_type const &val);
+				void	insert (iterator position, iterator first, iterator list);
 				// DEBUG
 
 				void	debug(void) const{
