@@ -3,6 +3,7 @@
 
 # define DEFAULT_CAPACITY 4
 
+# include <iomanip>
 # include <cstddef>
 # include <iostream>
 # include <memory>
@@ -146,7 +147,7 @@ namespace ft{
 
 				// ELEMENT ACCESS
 				//
-				// all of this shit needs protection! check if n is valid.
+				// protecti invalid input! check if n is valid.
 				const_reference	operator[](size_t n) const{
 					return _data[n];
 				}
@@ -172,10 +173,11 @@ namespace ft{
 					return _data[_size - 1];
 				}
 
-				// MODIFIERS	
+				// MODIFIERS
+				// construct and destroy data array not every element.
 				void	assign(size_t n,const value_type &val){
 					for (int i=0; i<_size; i++)
-						_allocator.destroy(_data[i]);
+						_allocator.destroy(&_data[i]);
 					_allocator.deallocate(_data, _capacity);
 					_size = 0;
 					_capacity = 0;
@@ -183,9 +185,10 @@ namespace ft{
 					for (int i=0; i<n; i++)
 						_data[_size++] = val;
 				}
-				void	assign(iterator first, iterator last){
+				template <class InputIterator>
+				void	assign(InputIterator first,InputIterator last){
 					for (int i=0; i<_size; i++)
-						_allocator.destroy(_data[i]);
+						_allocator.destroy(&_data[i]);
 					_allocator.deallocate(_data, _capacity);
 					_size = 0;
 					_capacity = 0;
@@ -193,9 +196,9 @@ namespace ft{
 						_data[_size++] = *it;
 
 				}
-				void	push_back(T const &val){
+				void	push_back(value_type const &val){
 					if (_size == _capacity){
-						T	*tmp = _allocator.allocate(_capacity * 2);
+						pointer	tmp = _allocator.allocate(_capacity * 2);
 						for (int i=0; i < _size; i++){
 							_allocator.construct(tmp+i, _data[i]);
 							_allocator.destroy(_data+i);
@@ -211,18 +214,27 @@ namespace ft{
 					_allocator.destroy(_data[_size - 1]);
 					_size -= 1;
 				}
-				iterator 	insert (iterator position, value_type const &val);
+				iterator 	insert (iterator position, value_type const &val){
+					int idx = position - begin();
+					if (idx == _size)
+						_data[_size++] = val;
+					else{
+
+					}
+					return position;
+				}
 				void		insert(iterator position, size_type n, value_type const &val);
+				template <class InputIterator>
 				void		insert (iterator position, iterator first, iterator list);
 				iterator 	erase(iterator position);
-				iterator 	erase(iteartor first, iterator last);
+				iterator 	erase(iterator first, iterator last);
 				void		swap(vector &x);
 				void		clear();
 				
 				// DEBUG
 
 				void	debug(void) const{
-					std::cout << "----------------------------------------" << std::endl;	
+					std::cout << std::setw(40) << "----------------------------------------" << std::endl;	
 					std::cout << "_data" << std::endl;	
 					std::cout << "[";
 					if (_size > 1){
@@ -240,7 +252,7 @@ namespace ft{
 					std::cout << "----------------------------------------" << std::endl;	
 					std::cout << "_capacity" << std::endl;	
 					std::cout << _capacity << std::endl;
-					std::cout << "----------------------------------------" << std::endl;	
+					std::cout << std::setw(40) << "----------------------------------------" << std::endl;	
 
 
 				}

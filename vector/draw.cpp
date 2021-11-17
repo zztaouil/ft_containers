@@ -13,9 +13,8 @@ void	debug(std::vector<int> &vec)
 int	main()
 {
 	std::vector<int> vec1;
-	std::vector<int> vec2;
-
-	for (int i=5; i<50; i++) vec1.push_back(i);
+	std::vector<char> vec2;
+	vec1.assign(5,100);
 	debug(vec1);
 	vec1.assign(7, 100);
 	debug(vec1);

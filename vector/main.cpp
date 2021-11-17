@@ -3,12 +3,13 @@
 #include <vector>
 #include <string>
 #include <iterator>
+#include <iomanip>
 
 using namespace std;
 int 	main()
 {
 	{	
-		std::cout << "CONSTRUCTORS" << std::endl;
+		std::cout << std::setw(40) << "CONSTRUCTORS" << std::endl;
 		ft::vector<int> first;
 		ft::vector<int> second(4,100);
 		ft::vector<int> third (second.begin(), second.end());
@@ -24,7 +25,7 @@ int 	main()
 	}
 	
 	{
-		std::cout << "OPERATOR=" << std::endl;
+		std::cout << std::setw(40) << "OPERATOR=" << std::endl;
 		ft::vector<int> foo(3,0);
 		ft::vector<int> bar(5,0);
 
@@ -37,12 +38,19 @@ int 	main()
 	}
 	
 	{
-		std::cout << "MAX SIZE" << std::endl;
+		std::cout << std::setw(40) << "MAX SIZE" << std::endl;
 
 		ft::vector<int> foo(20, 69);
 		std::cout << "size: " << foo.size() << std::endl;
 		std::cout << "capacity: " << foo.capacity() << std::endl;
 		std::cout << "max_size: " << foo.max_size() << std::endl;
 	}
-
+	{
+		std::cout << std::setw(40) << "ASSIGN" << std::endl;
+		ft::vector<char>	bar(20, 'a');	
+		ft::vector<char>	foo(20, 'z');
+		foo.debug();
+		foo.assign(bar.begin(), bar.end());
+		foo.debug();
+	}
 }
