@@ -219,7 +219,7 @@ namespace ft{
 					if (idx == _size)
 						_data[_size++] = val;
 					else{
-
+						std::cout << idx << std::endl;
 					}
 					return position;
 				}
