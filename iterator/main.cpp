@@ -3,7 +3,7 @@
 #include "iterators.hpp"
 #include <string>
 
-
+/*
 int	main(void)
 {
 	int arr[] = {1, 2, 3, 4, 5};
@@ -25,9 +25,9 @@ int	main(void)
 
 
 	return 0;
-}
+}*/
 
-/* int		main()
+int		main()
 {
 	int arr[] = {1, 2, 3, 4, 5};
 
@@ -37,8 +37,8 @@ int	main(void)
 	ite = arr + 5;
 
 	while (it != ite){
-		std::cout << it.get_ptr() << std::endl;
+		std::cout << (*it) << std::endl;
 		it++;
 	}
 	return 0;
-} */
+}

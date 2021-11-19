@@ -24,49 +24,93 @@ namespace ft{
 				typedef size_t					size_type;
 				typedef ptrdiff_t				difference_type;
 
+				// Exceptions
+				class outOfRangeException : public std::exception{
+					public:
+						virtual const char *what(void) const throw(){
+							return "position out of range";
+						}
+				};
 
+// vector::vector
 				explicit vector (const allocator_type& alloc = allocator_type()) : _capacity(DEFAULT_CAPACITY){
 					_data = _allocator.allocate(DEFAULT_CAPACITY);
+					(void)alloc;
 				}
 				explicit vector (size_type n, const value_type& val = value_type(),
-						const allocator_type& alloc = allocator_type()) : _capacity(n), _size(n){
+						const allocator_type& alloc = allocator_type())
+						: _size(n), _capacity(n){
 					_data = _allocator.allocate(_capacity);
-					for (int i=0; i<_size; i++){
-						_allocator.construct(_data+i, val);
+					_allocator.construct(_data);
+					for (size_type i=0; i<_size; i++){
+						_data[i] = val;
 					}
+					(void)alloc;				
 				}
 				vector(iterator begin, iterator end){
 					_capacity = end - begin;
-					_size = end - begin;
-					_data = _allocator.allocate(_size);
-					for (int i=0; i < _size; i++){
-						_allocator.construct(_data+i, begin[i]);
+					_data = _allocator.allocate(_capacity);
+					_size = _capacity;
+					_allocator.construct(_data);
+					for (size_type i=0; i < _size; i++){
+						_data[i] = begin[i];
 					}
 				}
 				vector (const vector& x){
 					*this = x;
 				}
-				~vector(void){
-					if (_size > 0){
+// ;
 
-						for (int i=_size-1; i >=0; i--){
-							_allocator.destroy(_data+i);
-						}
-					}
-					_allocator.deallocate(_data, _capacity);
+// vector::~vector
+				~vector(void){
+					if (_capacity > 0)
+						_allocator.deallocate(_data, _capacity);
 				}
+// ;
 				vector &operator=(vector const &rhs){
 					if (this != &rhs){
 						_size = rhs.size();
 						_capacity = rhs.capacity();
 						_data = _allocator.allocate(_capacity);
-						for (int i=0; i<_size; i++){
+						for (size_type i=0; i<_size; i++){
 							_data[i] = rhs.at(i);
 						}
 					}
 					return *this;
 				}
 
+// vector::assign
+				void	assign(size_t n,const value_type &val){
+					_allocator.destroy(_data);
+					_size = 0;
+					if ( n > _capacity){
+						_allocator.deallocate(_data, _capacity);
+						_capacity = 0;
+						_data = _allocator.allocate(n);
+						_capacity=n;
+					}
+					_allocator.construct(_data);
+					for (size_type i=0; i<n; i++)
+						_data[_size++] = val;
+				}
+				template <class InputIterator>
+				void	assign(InputIterator first,InputIterator last){
+					size_type len = last - first;
+					_allocator.destroy(_data);
+					_size = 0;
+					if (len > _capacity){
+						_allocator.deallocate(_data, _capacity);
+						_capacity = 0;
+						_data = _allocator.allocate(len);
+						_capacity = len;
+
+					}
+					_allocator.construct(_data);
+					for (iterator it = first; it != last; it++)
+						_data[_size++] = *it;
+				}
+// ;
+	
 				//	ITERATORS
 				iterator		begin(void){
 					return iterator(_data);
@@ -108,7 +152,7 @@ namespace ft{
 				void resize (size_type n, value_type val = value_type()){
 					if (n < _size){
 						pointer tmp = _allocator.allocate(n);
-						for (int i=0; i<n; i++){
+						for (size_type i=0; i<n; i++){
 							_allocator.construct(tmp+i, _data[i]);
 							_allocator.destroy(&_data[i]);
 						}
@@ -119,7 +163,7 @@ namespace ft{
 					}
 					else if (n > _size){
 						pointer tmp = _allocator.allocate(n);
-						int i=0;
+						size_type i=0;
 						while (i < _size){
 							_allocator.construct(tmp+i, _data[i]);
 							_allocator.destroy(_data+i);
@@ -147,59 +191,64 @@ namespace ft{
 
 				// ELEMENT ACCESS
 				//
-				// protecti invalid input! check if n is valid.
+				// exception protecti invalid input! check if n is valid.
 				const_reference	operator[](size_t n) const{
+					try{
+						if (n >= _size)
+							throw outOfRangeException();
+					}catch (outOfRangeException &e){
+						std::cout << "operator[]:" << '\n';
+						std::cout << e.what() << std::endl;
+					}
 					return _data[n];
 				}
 				reference	operator[](size_t n){
+					try{
+						if (n >= _size)
+							throw outOfRangeException();
+					}catch (outOfRangeException &e){
+						std::cout << "operator[]:" << '\n';
+						std::cout << e.what() << std::endl;
+					}
 					return _data[n];
 				}
-				const_reference	at(size_t idx) const{
-					return _data[idx];
+				const_reference	at(size_t n) const{
+					try{
+						if (n >= _size)
+							throw outOfRangeException();
+					}catch (outOfRangeException &e){
+						std::cout << e.what() << '\n';
+					}
+					return _data[n];
 				}
-				reference	at(size_t idx){
-					return _data[idx];
+				reference	at(size_t n){
+					try{
+						if (n >= _size)
+							throw outOfRangeException();
+					}catch (outOfRangeException &e){
+						std::cout << e.what() << '\n';
+					}
+					return _data[n];
 				}
-				const_reference	front(void) const{
+				const_reference	front(void) const{				
 					return _data[0];
 				}
-				reference	front(void){
+				reference	front(void){		
 					return _data[0];
 				}
-				const_reference	back(void) const{
+				const_reference	back(void) const{				
 					return _data[_size - 1];
 				}
-				reference	back(void){
+				reference	back(void){				
 					return _data[_size - 1];
 				}
 
 				// MODIFIERS
 				// construct and destroy data array not every element.
-				void	assign(size_t n,const value_type &val){
-					for (int i=0; i<_size; i++)
-						_allocator.destroy(&_data[i]);
-					_allocator.deallocate(_data, _capacity);
-					_size = 0;
-					_capacity = 0;
-					_allocator.allocate(n);
-					for (int i=0; i<n; i++)
-						_data[_size++] = val;
-				}
-				template <class InputIterator>
-				void	assign(InputIterator first,InputIterator last){
-					for (int i=0; i<_size; i++)
-						_allocator.destroy(&_data[i]);
-					_allocator.deallocate(_data, _capacity);
-					_size = 0;
-					_capacity = 0;
-					for (iterator it = first; it != last; it++)
-						_data[_size++] = *it;
-
-				}
 				void	push_back(value_type const &val){
 					if (_size == _capacity){
 						pointer	tmp = _allocator.allocate(_capacity * 2);
-						for (int i=0; i < _size; i++){
+						for (size_type i=0; i < _size; i++){
 							_allocator.construct(tmp+i, _data[i]);
 							_allocator.destroy(_data+i);
 						}
@@ -215,7 +264,7 @@ namespace ft{
 					_size -= 1;
 				}
 				iterator 	insert (iterator position, value_type const &val){
-					int idx = position - begin();
+					size_type idx = position - begin();
 					if (idx == _size)
 						_data[_size++] = val;
 					else{
@@ -229,16 +278,23 @@ namespace ft{
 				iterator 	erase(iterator position);
 				iterator 	erase(iterator first, iterator last);
 				void		swap(vector &x);
-				void		clear();
+				void		clear(){
+					for (size_type i=0; i<_size; i++){
+						_allocator.destroy(_data+i);
+					}
+					_allocator.deallocate(_data, _capacity);
+					_size=0;
+					_capacity=0;
+				}
 				
 				// DEBUG
 
 				void	debug(void) const{
-					std::cout << std::setw(40) << "----------------------------------------" << std::endl;	
+					std::cout << std::setw(40) << "---------------------DEBUGG--------------" << std::endl;	
 					std::cout << "_data" << std::endl;	
 					std::cout << "[";
 					if (_size > 1){
-						for (int i=0; i < _size-1; i++){
+						for (size_type i=0; i < _size-1; i++){
 							std::cout << _data[i] << ", ";
 						}
 					}
@@ -260,8 +316,8 @@ namespace ft{
 			private:
 				allocator_type		_allocator;
 				value_type		*_data;
-				size_t			_size;
-				size_t			_capacity;
+				size_type			_size;
+				size_type			_capacity;
 		};
 }
 #endif

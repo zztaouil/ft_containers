@@ -8,22 +8,20 @@
 using namespace std;
 int 	main()
 {
-	{	
-		std::cout << std::setw(40) << "CONSTRUCTORS" << std::endl;
+	// constructors
+	{		std::cout << std::setw(40) << "CONSTRUCTORS" << std::endl;
 		ft::vector<int> first;
 		ft::vector<int> second(4,100);
 		ft::vector<int> third (second.begin(), second.end());
 		ft::vector<int> fourth (third);
-
 		int myints[] = {16, 2, 77, 29};
 		ft::vector<int> fifth(myints, myints + sizeof(myints) / sizeof(int));
-
 		std::cout << "The contents of fifth are:";
 		for (ft::vector<int>::iterator it = fifth.begin(); it != fifth.end(); ++it)
 			std::cout << ' ' << *it;
-		std::cout << '\n';
+		std::cout << "\n";
 	}
-	
+	// operator =
 	{
 		std::cout << std::setw(40) << "OPERATOR=" << std::endl;
 		ft::vector<int> foo(3,0);
@@ -34,23 +32,30 @@ int 	main()
 
 		std::cout << "Size of foo: " << int(foo.size()) << std::endl;
 		std::cout << "Size of bar: " << int(bar.size()) << std::endl;
-
 	}
-	
-	{
-		std::cout << std::setw(40) << "MAX SIZE" << std::endl;
+
+	// max size	
+	{		std::cout << std::setw(40) << "MAX SIZE" << std::endl;
 
 		ft::vector<int> foo(20, 69);
 		std::cout << "size: " << foo.size() << std::endl;
 		std::cout << "capacity: " << foo.capacity() << std::endl;
 		std::cout << "max_size: " << foo.max_size() << std::endl;
 	}
-	{
-		std::cout << std::setw(40) << "ASSIGN" << std::endl;
+
+	// Assign
+	{		std::cout << std::setw(40) << "ASSIGN" << std::endl;
 		ft::vector<char>	bar(20, 'a');	
 		ft::vector<char>	foo(20, 'z');
 		foo.debug();
 		foo.assign(bar.begin(), bar.end());
 		foo.debug();
+		bar.assign(90, 'z');
+		bar.debug();
+	}
+	// At
+	{
+		ft::vector<int> foo(25,42);
+		std::cout << foo.at(422) << std::endl;
 	}
 }
