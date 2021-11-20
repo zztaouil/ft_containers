@@ -47,11 +47,12 @@ namespace ft{
 						(void)alloc;
 						// O(n)	
 					}
-				vector(iterator begin, iterator end)
+				template <class InputIterator>
+				vector(InputIterator begin, InputIterator end)
 					: _size(end - begin), _capacity(_size){
 						_data = _allocator.allocate(_capacity);
 						for (size_type i=0; i < _size; i++){
-							_allocator.construct(_data + i, begin[i]);
+							_allocator.construct(_data + i, *begin++);
 						}
 					}
 				vector (const vector& x){
