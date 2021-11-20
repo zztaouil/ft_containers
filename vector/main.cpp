@@ -73,4 +73,14 @@ int 	main()
 		foo.insert(foo.begin() + 5, 11, 80);
 		foo.debug();
 	}
+	// 
+	{
+		ft::vector<int> foo(10);
+		for (int i = 0; i < 10; i++) foo[i] = 2 * i;
+
+		foo.debug();
+		foo.erase(foo.end());
+		foo.debug();
+
+	}
 }

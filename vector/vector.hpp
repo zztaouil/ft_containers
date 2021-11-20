@@ -7,7 +7,9 @@
 # include <cstddef>
 # include <iostream>
 # include <memory>
+# include <type_traits>
 # include "../iterator/iterators.hpp"
+//# include "../iterator/enable_if.hpp"
 
 namespace ft{
 	template <class T, class Allocator = std::allocator<T> >
@@ -33,23 +35,25 @@ namespace ft{
 				};
 
 				// vector::vector
-				explicit vector (const allocator_type& alloc = allocator_type()) : _size(DEFAULT_CAPACITY), _capacity(DEFAULT_CAPACITY){
+				explicit vector (const allocator_type& alloc = allocator_type()) : _allocator(alloc), _size(DEFAULT_CAPACITY), _capacity(DEFAULT_CAPACITY){
 					_data = _allocator.allocate(DEFAULT_CAPACITY);
 					(void)alloc;
 				}
+				//_allocator(alloc)
 				explicit vector (size_type n, const value_type& val = value_type(),
 						const allocator_type& alloc = allocator_type())
-					: _size(n), _capacity(n){
+					: _allocator(alloc), _size(n), _capacity(n){
 						_data = _allocator.allocate(_capacity);
 						for (size_type i=0; i<_size; i++){
 							_allocator.construct(_data + i, val);
 						}
-						(void)alloc;
 						// O(n)	
 					}
+				// C++ feature
+				//typename enable_if<!is_integral<InputIterator>::value,InputIterator >::type = InputIterator())
 				template <class InputIterator>
-				vector(InputIterator begin, InputIterator end)
-					: _size(end - begin), _capacity(_size){
+				vector(InputIterator begin, InputIterator end, const allocator_type &alloc = allocator_type(), typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator >::type = InputIterator())
+					: _allocator(alloc), _size(end - begin), _capacity(_size){
 						_data = _allocator.allocate(_capacity);
 						for (size_type i=0; i < _size; i++){
 							_allocator.construct(_data + i, *begin++);
@@ -270,8 +274,27 @@ namespace ft{
 					}
 				}
 				template <class InputIterator>
-					void		insert (iterator position, InputIterator first, InputIterator list);
-				iterator 	erase(iterator position);
+					void		insert (iterator position, InputIterator first, InputIterator last, typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type = InputIterator()){
+						difference_type d = std::distance(begin(), position);
+						difference_type l = std::distance(first, last);
+						
+					}
+				iterator 	erase(iterator position){
+					difference_type d = std::distance(begin(), position);
+					if (static_cast<size_type>(d) == _size - 1){
+						_allocator.destroy(_data + _size - 1);
+						_size--;
+					}
+					else if (static_cast<size_type>(d) < _size){
+						_size--;
+						for (size_type i = static_cast<size_type>(d); i < _size; i++){
+							_allocator.destroy(_data + i);
+							_allocator.construct(_data + i, _data[i + 1]);
+						}
+						_allocator.destroy(_data + _size);
+					}
+					return iterator(_data + d);
+				}
 				iterator 	erase(iterator first, iterator last);
 				void		swap(vector &x);
 				void		clear(){
@@ -311,7 +334,7 @@ namespace ft{
 
 			private:
 				allocator_type		_allocator;
-				value_type		*_data;
+				value_type			*_data;
 				size_type			_size;
 				size_type			_capacity;
 		};

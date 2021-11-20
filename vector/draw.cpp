@@ -13,15 +13,16 @@ void	debug(std::vector<T> &vec)
 	std::cout << std::endl;
 
 	std::cout << "Capacity : " << vec.capacity() << std::endl;
-	std::cout << "Size : " << vec.size() << std::endl;
+	std::cout << "Size : " << vec.size() << std::endl << std::endl;
 }
+
 int	main()
 {
 	std::vector<int> vec1(10, 67);
+	std::vector<int> vec2(6,42);
 	vec1.push_back(88);
 	debug<int>(vec1);
-	std::vector<int>::iterator it = vec1.insert(vec1.end(), 9, 42);
-	debug<int>(vec1);
+	debug<int>(vec2);
 
 
 	return 0;
