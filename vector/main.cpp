@@ -14,7 +14,7 @@ int 	main()
 		ft::vector<int> second(4,100);
 		ft::vector<int> third (second.begin(), second.end());
 		ft::vector<int> fourth (third);
-		int myints[] = {16, 2, 77, 29};
+		int myints[] = {16, 2, 77, 29, 69, 69, 32, 124, 412};
 		ft::vector<int> fifth(myints, myints + sizeof(myints) / sizeof(int));
 		std::cout << "The contents of fifth are:";
 		for (ft::vector<int>::iterator it = fifth.begin(); it != fifth.end(); ++it)
@@ -53,9 +53,24 @@ int 	main()
 		bar.assign(90, 'z');
 		bar.debug();
 	}
+	// resize
+	{
+		std::cout << "resize" << std::endl;
+		ft::vector<int> foo(25,42);
+		foo.resize(40);
+
+	}
 	// At
 	{
-		ft::vector<int> foo(25,42);
-		std::cout << foo.at(422) << std::endl;
+		ft::vector<int> bar(69, 69);
+		bar.at(68);
+	}
+	// insert
+	{
+		ft::vector<int> foo(10, 42);
+		foo.debug();
+		ft::vector<int>::iterator it = foo.insert(foo.end(), 69);
+		foo.debug();
+		std::cout << *it << endl;
 	}
 }

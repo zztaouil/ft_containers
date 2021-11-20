@@ -7,17 +7,12 @@
 
 template <class T>
 class Iterator : public std::iterator<std::random_access_iterator_tag, T>{
-
+public:
 	typedef	typename std::iterator<std::random_access_iterator_tag, T>::value_type		value_type;
 	typedef	typename std::iterator<std::random_access_iterator_tag, T>::pointer		pointer;
 	typedef	const pointer	const_pointer;
 	typedef	typename std::iterator<std::random_access_iterator_tag, T>::reference		reference;
 	typedef	typename std::iterator<std::random_access_iterator_tag, T>::difference_type	difference_type;
-
-private:
-	pointer _ptr;
-
-public:
 	//Is default-constructible, copy-constructible, copy-assignable, destructible i.e (X a; X b(a); b = a;)
 	Iterator(pointer ptr) : _ptr(ptr){}
 	Iterator(void) : _ptr(nullptr){}
@@ -91,6 +86,8 @@ public:
 	pointer get_ptr(void) const{
 		return _ptr;
 	}
+private:
+	pointer _ptr;
 };
 
 //Arithmetic overloads
