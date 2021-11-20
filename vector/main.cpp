@@ -68,10 +68,14 @@ int 	main()
 	// insert
 	{
 		ft::vector<int> foo(10);
+		ft::vector<int> bar(7, 48);
 		for (int i = 0; i < 10; i++) foo[i] = 2 * i;
 		foo.debug();
 		foo.insert(foo.begin() + 5, 11, 80);
 		foo.debug();
+		bar.debug();
+		bar.insert(bar.begin() + 3,foo.begin(), foo.end());
+		bar.debug();
 	}
 	// 
 	{
@@ -79,8 +83,7 @@ int 	main()
 		for (int i = 0; i < 10; i++) foo[i] = 2 * i;
 
 		foo.debug();
-		foo.erase(foo.end());
+		foo.erase(foo.end() - 1);
 		foo.debug();
-
 	}
 }

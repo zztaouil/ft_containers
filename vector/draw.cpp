@@ -18,9 +18,10 @@ void	debug(std::vector<T> &vec)
 
 int	main()
 {
-	std::vector<int> vec1(10, 67);
+	std::vector<int> vec1(4,67);
 	std::vector<int> vec2(6,42);
 	vec1.push_back(88);
+	vec2.insert(vec2.begin()+1, vec1.begin(), vec1.end());
 	debug<int>(vec1);
 	debug<int>(vec2);
 

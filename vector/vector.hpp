@@ -277,7 +277,29 @@ namespace ft{
 					void		insert (iterator position, InputIterator first, InputIterator last, typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type = InputIterator()){
 						difference_type d = std::distance(begin(), position);
 						difference_type l = std::distance(first, last);
-						
+						if (l + _size > _capacity)
+						{
+							if (l + _size > _capacity * 2)
+								reserve(l + _size);
+							else
+								reserve(_capacity * 2);
+						}
+						if (static_cast<size_type>(d) == _size){
+							for (size_type i = _size; i < _size + l; i++){
+								_allocator.construct(_data + i, *first++);
+							}
+							_size += l;
+						}
+						else if (static_cast<size_type>(d) < _size){
+							for (size_type i = _size + l; i >= (static_cast<size_type>(d) + l); i--){
+								_allocator.construct(_data + i, _data[i - l]);
+							}
+							for (size_type i = static_cast<size_type>(d); i < (static_cast<size_type>(d) + l); i++){
+								_allocator.destroy(_data + i);
+								_allocator.construct(_data + i, *first++);
+							}
+							_size += l;
+						}
 					}
 				iterator 	erase(iterator position){
 					difference_type d = std::distance(begin(), position);
