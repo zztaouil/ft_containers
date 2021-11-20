@@ -229,10 +229,10 @@ namespace ft{
 					if (_size + 1 > _capacity){
 						reserve(_capacity * 2);
 					}
-					if (d == _size)
+					if (static_cast<size_type>(d) == _size)
 						_data[_size++] = val;
-					else if (d < _size){
-						for (size_type i = _size; i > d; i--){
+					else if (static_cast<size_type>(d) < _size){
+						for (size_type i = _size; i > static_cast<size_type>(d); i--){
 							_allocator.construct(_data + i, _data[i - 1]);
 							_allocator.destroy(_data + i - 1);
 						}
@@ -251,11 +251,25 @@ namespace ft{
 						else
 							reserve(_capacity * 2);
 					}
-
-					return iterator(_data + d);
+					if (static_cast<size_type>(d) == _size){
+						for (size_type i = _size; i < (_size + n); i++)
+							_allocator.construct(_data + i, val);
+						_size += n;
+					}
+					else if (static_cast<size_type>(d) < _size){
+						for (size_type i = _size + n - 1; i >= (static_cast<size_type>(d) + n); i--){
+							//std::cout << _data[i] << std::endl;
+							_allocator.construct(_data + i, _data[i - n]);
+						}
+						for (size_type i = static_cast<size_type>(d); i < (static_cast<size_type>(d) + n); i++){
+							_allocator.destroy(_data + i);
+							_allocator.construct(_data + i, val);
+						}
+						_size += n;
+					}
 				}
 				template <class InputIterator>
-					void		insert (iterator position, iterator first, iterator list);
+					void		insert (iterator position, InputIterator first, InputIterator list);
 				iterator 	erase(iterator position);
 				iterator 	erase(iterator first, iterator last);
 				void		swap(vector &x);
@@ -271,7 +285,7 @@ namespace ft{
 				// DEBUG
 
 				void	debug(void) const{
-					std::cout << std::setw(40) << "---------------------DEBUGG--------------" << std::endl;	
+					std::cout << std::setw(40) << std::right << "---------------------DEBUGG--------------" << std::endl;	
 					std::cout << "_data" << std::endl;	
 					std::cout << "[";
 					if (_size > 1){

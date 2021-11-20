@@ -67,10 +67,10 @@ int 	main()
 	}
 	// insert
 	{
-		ft::vector<int> foo(10, 42);
+		ft::vector<int> foo(10);
+		for (int i = 0; i < 10; i++) foo[i] = 2 * i;
 		foo.debug();
-		ft::vector<int>::iterator it = foo.insert(foo.end(), 69);
+		foo.insert(foo.begin() + 5, 11, 80);
 		foo.debug();
-		std::cout << *it << endl;
 	}
 }
