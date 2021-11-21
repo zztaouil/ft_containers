@@ -66,10 +66,9 @@ namespace ft{
 
 				// vector::~vector
 				~vector(void){
-					if (_size > 0)
-						_allocator.destroy(_data);
-					if (_capacity > 0)
-						_allocator.deallocate(_data, _capacity);
+					for (size_type i = 0; i < _size; i++)
+						_allocator.destroy(_data + i);
+					_allocator.deallocate(_data, _capacity);
 				}
 				// ;
 				vector &operator=(vector const &rhs){
@@ -219,7 +218,9 @@ namespace ft{
 					}
 				// ;
 				void	push_back(value_type const &val){
-					if (_size == _capacity){
+					if (_capacity == 0)
+						reserve(1);
+					else if (_size == _capacity){
 						reserve(_capacity * 2);
 					}
 					_allocator.construct(_data+_size, val);
@@ -317,7 +318,30 @@ namespace ft{
 					}
 					return iterator(_data + d);
 				}
-				iterator 	erase(iterator first, iterator last);
+				iterator 	erase(iterator first, iterator last){
+					difference_type d = std::distance(begin(), first);
+					difference_type l = std::distance(first, last);
+
+					if (d + l == static_cast<difference_type>(_size) - 1){
+						for (size_type i = static_cast<size_type>(d); i < _size; i++)
+							_allocator.destroy(_data + i);
+						_size -= l;
+					}
+					else if (static_cast<size_type>(d + l) < _size - 1){
+						for (size_type i = static_cast<size_type>(d); i <= static_cast<size_type>(d + l); i++){
+							std::cout << _data[i] << std::endl;
+							_allocator.destroy(_data + i);
+						}
+						std::cout << std::endl;
+						for (size_type i = static_cast<size_type>(d + l) + 1; i < _size; i++){
+							std::cout << _data[i] << std::endl;
+							_allocator.construct(_data + i - l - 1, _data[i]);
+							_allocator.destroy(_data + i);
+						}
+						_size -= l + 1;
+					}
+					return iterator(_data);
+				}
 				void		swap(vector &x);
 				void		clear(){
 					for (size_type i=0; i<_size; i++){

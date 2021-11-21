@@ -79,11 +79,13 @@ int 	main()
 	}
 	// 
 	{
-		ft::vector<int> foo(10);
-		for (int i = 0; i < 10; i++) foo[i] = 2 * i;
+		ft::vector<int> foo;
+		for (int i = 0; i < 10; i++) foo.push_back(2 * (i+1));
+		foo.debug();
+		foo.erase(foo.begin() + 2);
+		foo.debug();
+		foo.erase(foo.begin()+2, foo.begin()+6);
+		foo.debug();
 
-		foo.debug();
-		foo.erase(foo.end() - 1);
-		foo.debug();
 	}
 }
