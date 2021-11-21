@@ -55,18 +55,20 @@ int 	main()
 	}
 	// resize
 	{
-		std::cout << "resize" << std::endl;
+		std::cout << std::setw(40) << "RESIZE" << std::endl;
 		ft::vector<int> foo(25,42);
 		foo.resize(40);
 
 	}
 	// At
 	{
+			std::cout << std::setw(40) << "AT" << std::endl;
 		ft::vector<int> bar(69, 69);
 		bar.at(68);
 	}
 	// insert
 	{
+		std::cout << std::setw(40) << "INSERT" << std::endl;
 		ft::vector<int> foo(10);
 		ft::vector<int> bar(7, 48);
 		for (int i = 0; i < 10; i++) foo[i] = 2 * i;
@@ -79,6 +81,7 @@ int 	main()
 	}
 	//  erase
 	{
+		std::cout << std::setw(40) << "ERASE" << std::endl;
 		ft::vector<int> foo;
 		for (int i = 0; i < 10; i++) foo.push_back(2 * (i+1));
 		foo.debug();
@@ -90,12 +93,13 @@ int 	main()
 	}
 	// swap
 	{
-		// ft::vector<int> bar(42,42);
-		// ft::vector<int> foo(69,69);
+		std::cout << std::setw(40) << "SWAP" << std::endl;
+		ft::vector<int> bar(42,42);
+		ft::vector<int> foo(69,69);
 
 		// bar.swap(foo);
-		// bar.debug();
-		// foo.debug();
+		bar.debug();
+		foo.debug();
 
 	}
 }

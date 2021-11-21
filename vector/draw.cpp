@@ -18,19 +18,14 @@ void	debug(std::vector<T> &vec)
 
 int	main()
 {
-	std::vector<int> vec1(4,67);
+	std::vector<int> vec1(4,42);
 	std::vector<int> vec2(6,42);
 	vec1.push_back(88);
-	vec2.insert(vec2.begin()+1, vec1.begin(), vec1.end());
+
 	debug<int>(vec1);
 	debug<int>(vec2);
 
+	std::cout << (vec1 > vec2) << std::endl;
 
 	return 0;
 }
-/*
-					if (n > _capacity)
-						reserve(_capacity * 2 + (n - _capacity));
-					else
-						reserve(_capacity * 2);
-*/

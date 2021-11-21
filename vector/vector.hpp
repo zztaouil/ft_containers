@@ -21,8 +21,8 @@ namespace ft{
 				typedef typename allocator_type::const_reference const_reference;
 				typedef typename allocator_type::pointer 	pointer;
 				typedef typename allocator_type::const_pointer 	const_pointer;	
-				typedef Iterator<value_type> 			iterator;
-				typedef Iterator<const value_type> 		const_iterator;
+				typedef ft::Iterator<value_type> 			iterator;
+				typedef ft::Iterator<const value_type> 		const_iterator;
 				typedef size_t					size_type;
 				typedef ptrdiff_t				difference_type;
 
@@ -31,6 +31,12 @@ namespace ft{
 					public:
 						virtual const char *what(void) const throw(){
 							return "out_of_range";
+						}
+				};
+				class emptyVector : public std::exception{
+					public:
+						virtual const char *what(void) const throw(){
+							return "vector_is_empty";
 						}
 				};
 
@@ -66,9 +72,12 @@ namespace ft{
 
 				// vector::~vector
 				~vector(void){
-					for (size_type i = 0; i < _size; i++)
-						_allocator.destroy(_data + i);
-					_allocator.deallocate(_data, _capacity);
+						if (_size != 0){
+							for (size_type i = 0; i < _size; i++)
+								_allocator.destroy(_data + i);
+						}
+						if (_capacity != 0)
+							_allocator.deallocate(_data, _capacity);
 				}
 				// ;
 				vector &operator=(vector const &rhs){
@@ -77,7 +86,7 @@ namespace ft{
 						_capacity = rhs.capacity();
 						_data = _allocator.allocate(_capacity);
 						for (size_type i=0; i<_size; i++){
-							_allocator.construct(_data + i, rhs.at(i));
+							_allocator.construct(_data + i, rhs[i]);
 						}
 					}
 					return *this;
@@ -178,15 +187,23 @@ namespace ft{
 					return _data[n];
 				}
 				const_reference	front(void) const{				
+					if (empty())
+						throw emptyVector();
 					return _data[0];
 				}
 				reference	front(void){		
+					if (empty())
+						throw emptyVector();
 					return _data[0];
 				}
-				const_reference	back(void) const{				
+				const_reference	back(void) const{
+					if (empty())
+						throw emptyVector();
 					return _data[_size - 1];
 				}
-				reference	back(void){				
+				reference	back(void){
+					if (empty())
+						throw emptyVector();		
 					return _data[_size - 1];
 				}
 
@@ -343,6 +360,7 @@ namespace ft{
 					return iterator(_data);
 				}
 				void		swap(vector &x){
+					std::cerr << "Bug Hunter" << std::endl;
 					vector tmp;
 					tmp = x;
 					x = *this;
@@ -353,9 +371,11 @@ namespace ft{
 					for (size_type i=0; i<_size; i++){
 						_allocator.destroy(_data+i);
 					}
-					_allocator.deallocate(_data, _capacity);
 					_size=0;
-					_capacity=0;
+				}
+
+				allocator_type get_allocator(void) const{
+					return _allocator;
 				}
 
 				// DEBUG
@@ -390,5 +410,76 @@ namespace ft{
 				size_type			_size;
 				size_type			_capacity;
 		};
+		template < class T, class Alloc>
+		bool operator == (const vector<T,Alloc> &lhs, const vector<T,Alloc> &rhs){
+			if (lhs.size() == rhs.size())
+			{
+				for (size_t i = 0; i < lhs.size(); i++)
+					if (lhs.at(i) != rhs.at(i))
+						return false;
+				return true;
+			}
+			return false;
+		}
+		template <class T, class Alloc>
+		bool operator != (const vector<T,Alloc> &lhs, const vector<T,Alloc> &rhs){
+			int flag = 0;
+			if (lhs.size() == rhs.size())
+			{
+				for (size_t i = 0; i < lhs.size(); i++)
+					if (lhs.at(i) != rhs.at(i))
+						flag = 1;
+				if (flag)
+					return true;
+				else
+					return false;
+			}
+			return true;
+		}
+		template <class T, class Alloc>
+		bool operator < (const vector<T,Alloc> &lhs, const vector<T,Alloc> &rhs){
+			size_t len = std::min(lhs.size(), rhs.size());
+			for (size_t i = 0; i < len; i++)
+			{
+				if (lhs.at(i) >= rhs.at(i))
+					return false;
+			}
+			return true;
+		}
+		template <class T, class Alloc>
+		bool operator <= (const vector<T,Alloc> &lhs, const vector<T,Alloc> &rhs){
+			size_t len = std::min(lhs.size(), rhs.size());
+			for (size_t i = 0; i < len; i++)
+			{
+				if (lhs.at(i) > rhs.at(i))
+					return false;
+			}
+			return true;
+		}
+		template <class T, class Alloc>
+		bool operator > (const vector<T,Alloc> &lhs, const vector<T,Alloc> &rhs){
+			size_t len = std::min(lhs.size(), rhs.size());
+			for (size_t i = 0; i < len; i++)
+			{
+				if (lhs.at(i) <= rhs.at(i))
+					return false;
+			}
+			return true;
+		}
+		template <class T, class Alloc>
+		bool operator >= (const vector<T,Alloc> &lhs, const vector<T,Alloc> &rhs){
+			size_t len = std::min(lhs.size(), rhs.size());
+			for (size_t i = 0; i < len; i++)
+			{
+				if (lhs.at(i) < rhs.at(i))
+					return false;
+			}
+			return true;
+		}
+		template <class T, class Alloc>
+		void	swap(vector<T,Alloc> &x, vector<T,Alloc> &y)
+		{
+			x.swap(y);
+		}
 }
 #endif
