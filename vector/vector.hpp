@@ -342,7 +342,13 @@ namespace ft{
 					}
 					return iterator(_data);
 				}
-				void		swap(vector &x);
+				void		swap(vector &x){
+					vector tmp;
+					tmp = x;
+					x = *this;
+					*this = tmp;
+					tmp.clear();
+				}
 				void		clear(){
 					for (size_type i=0; i<_size; i++){
 						_allocator.destroy(_data+i);

@@ -77,7 +77,7 @@ int 	main()
 		bar.insert(bar.begin() + 3,foo.begin(), foo.end());
 		bar.debug();
 	}
-	// 
+	//  erase
 	{
 		ft::vector<int> foo;
 		for (int i = 0; i < 10; i++) foo.push_back(2 * (i+1));
@@ -86,6 +86,16 @@ int 	main()
 		foo.debug();
 		foo.erase(foo.begin()+2, foo.begin()+6);
 		foo.debug();
+
+	}
+	// swap
+	{
+		// ft::vector<int> bar(42,42);
+		// ft::vector<int> foo(69,69);
+
+		// bar.swap(foo);
+		// bar.debug();
+		// foo.debug();
 
 	}
 }
