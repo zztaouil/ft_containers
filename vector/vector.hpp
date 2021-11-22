@@ -23,8 +23,8 @@ namespace ft{
 				typedef typename allocator_type::const_pointer 	const_pointer;	
 				typedef ft::Iterator<value_type> 			iterator;
 				typedef ft::Iterator<const value_type> 		const_iterator;
-				typedef ft::reverse_iterator<iterator> reverse_iterator;
-				typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
+				typedef ft::reverse_iterator<iterator>		reverse_iterator;
+				typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 				typedef size_t					size_type;
 				typedef ptrdiff_t				difference_type;
 
@@ -108,8 +108,11 @@ namespace ft{
 				iterator		end(void){
 					return iterator(_data + _size);
 				}
-				iterator		rbegin(void);
-				iterator		rend(void);
+				reverse_iterator			rbegin(void);
+				const_reverse_iterator		rbegin(void) const;
+
+				reverse_iterator			rend(void);
+				reverse_iterator			rend(void) const;
 
 				// CAPACITY
 				size_type	size(void) const{
@@ -362,12 +365,9 @@ namespace ft{
 					return iterator(_data);
 				}
 				void		swap(vector &x){
-					std::cerr << "Bug Hunter" << std::endl;
-					vector tmp;
-					tmp = x;
-					x = *this;
-					*this = tmp;
-					tmp.clear();
+					std::swap(this->_capacity, x._capacity);
+					std::swap(this->_size, x._size);
+					std::swap(this->_data, x._data);
 				}
 				void		clear(){
 					for (size_type i=0; i<_size; i++){
@@ -408,7 +408,7 @@ namespace ft{
 
 			private:
 				allocator_type		_allocator;
-				value_type			*_data;
+				pointer				_data;
 				size_type			_size;
 				size_type			_capacity;
 		};

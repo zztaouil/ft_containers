@@ -1,5 +1,4 @@
 #include "vector.hpp"
-#include "../iterator/iterators.hpp"
 #include <vector>
 #include <string>
 #include <iterator>
@@ -15,13 +14,12 @@ int	main()
 
 	vec1.debug();
 	vec2.debug();
+	vec3.debug();
 
-	std::cout << (vec2 <= vec3) << std::endl;
 
-	swap(vec1, vec2);
-	vec1.debug();
+	vec2.swap(vec1);
+
 	vec2.debug();
-
 
 	return 0;
 }
