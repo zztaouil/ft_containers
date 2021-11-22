@@ -17,9 +17,9 @@ namespace ft
 			typedef ft::iterator_traits<Iterator>::reference			reference;
 
 			reverse_iterator(void) : iterator() {}
-			explict reverser_iterator (iterator_type it) : _it(it){}
+			explict reverse_iterator (iterator_type it) : _it(it){}
 			template <class Iter>
-			reverse_iterator(const reverse_iteratr<Iter> &rev_it){
+			reverse_iterator(const reverse_iterator<Iter> &rev_it){
 				this->_it = rev_it.base();
 			}
 			iterator_type	base(void) const{
