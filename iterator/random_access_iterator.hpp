@@ -1,5 +1,5 @@
-#ifndef ITERATORS_HPP
-# define ITERATORS_HPP
+#ifndef RANDOM_ACCESS_ITERATOR_HPP
+# define RANDOM_ACCESS_ITERATOR_HPP
 
 # include <cstddef>
 # include <iostream>
@@ -9,6 +9,7 @@ namespace ft{
 	template <class T>
 		class Iterator : public std::iterator<std::random_access_iterator_tag, T>{
 			public:
+				typedef typename std::iterator<std::random_access_iterator_tag, T>::iterator_category iterator_category;
 				typedef	typename std::iterator<std::random_access_iterator_tag, T>::value_type		value_type;
 				typedef	typename std::iterator<std::random_access_iterator_tag, T>::pointer		pointer;
 				typedef	const pointer	const_pointer;
@@ -130,7 +131,7 @@ namespace ft{
 		{
 			return lhs.get_ptr() >= rhs.get_ptr();
 		}
-	// non memeber overloads
+	// non member overloads
 	template<class T>
 		std::ostream	&operator << (std::ostream &o, Iterator<T> const &obj)
 		{
