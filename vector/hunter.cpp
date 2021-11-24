@@ -23,7 +23,7 @@ int	foo()
 	return 0;
 }
 
-int	main()
+int	bar()
 {	
 	int arr[] = {1, 2, 3, 4, 5, 6};
 	ft::vector<int> vec1(arr, arr + sizeof(arr)/sizeof(int));
@@ -33,8 +33,18 @@ int	main()
 
 	while (rev_it!=rev_ite){
 		std::cout << *rev_it << std::endl;
-		rev_it++;
+		++rev_it;
 	}
 	vec1.debug();
+	return 0;
+}
+
+int	main()
+{	
+	int arr[] = {1, 2, 3, 4, 5, 6};
+	ft::vector<int> vec1(arr, arr + sizeof(arr)/sizeof(int));
+	for (ft::vector<int>::const_reverse_iterator it = vec1.rbegin(); it != vec1.rend(); it++){
+		std::cout << *it << std::endl;
+	}
 	return 0;
 }

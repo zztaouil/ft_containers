@@ -18,12 +18,12 @@ namespace ft{
 				//Is default-constructible, copy-constructible, copy-assignable, destructible i.e (X a; X b(a); b = a;)
 				Iterator(pointer ptr) : _ptr(ptr){}
 				Iterator(void) : _ptr(nullptr){}
-				Iterator(Iterator const &obj) { *this = obj; }
+				Iterator(Iterator const &obj) {*this = obj; }
 				~Iterator(void){}
 				Iterator &operator = (pointer addr){_ptr = addr; return *this; }
 				Iterator &operator = (Iterator const &rhs) {
 					if (this != &rhs){
-						_ptr = rhs.get_ptr();
+						_ptr = rhs._ptr;
 					}
 					return *this;
 				}
@@ -38,23 +38,23 @@ namespace ft{
 				reference operator * (void){ return *_ptr; }
 
 				//Can be incremented i.e (++a, a++, *a++)
-				Iterator operator ++ (int){
+				Iterator operator ++ (void){
 					Iterator<T> tmp = *this;
 					this->_ptr++;
 					return tmp;
 				}
-				Iterator &operator ++ (void){
+				Iterator &operator ++ (int){
 					this->_ptr++;
 					return *this;
 				}
 
 				//Can be decremented
-				Iterator operator -- (int){
+				Iterator operator -- (void){
 					Iterator<T> tmp = *this;
 					this->_ptr--;
 					return tmp;
 				}
-				Iterator &operator -- (void){
+				Iterator &operator -- (int){
 					this->_ptr--;
 					return *this;
 				}
@@ -80,10 +80,13 @@ namespace ft{
 				}
 
 				// offset dereference operator []
-				value_type operator [] (difference_type n){
+				value_type &operator [] (difference_type n){
 					return _ptr[n];	
 				}
-
+				// Conversion operator
+				operator Iterator<const T>() const{
+					return Iterator<const T>(_ptr);
+				}
 				//Getter for _ptr private member
 				pointer get_ptr(void) const{
 					return _ptr;
@@ -108,26 +111,26 @@ namespace ft{
 		}
 
 	//Comparison
-	template<class T>
-		bool	operator < (Iterator<T> const &lhs, Iterator<T> const &rhs)
+	template<class T1, class T2>
+		bool	operator < (Iterator<T1> const &lhs, Iterator<T2> const &rhs)
 		{
 			return lhs.get_ptr() < rhs.get_ptr();
 		}
 
-	template<class T>
-		bool	operator > (Iterator<T> const &lhs, Iterator<T> const &rhs)
+	template<class T1, class T2>
+		bool	operator > (Iterator<T1> const &lhs, Iterator<T2> const &rhs)
 		{
 			return lhs.get_ptr() > rhs.get_ptr();
 		}
 
-	template<class T>
-		bool	operator <= (Iterator<T> const &lhs, Iterator<T> const &rhs)
+	template<class T1, class T2>
+		bool	operator <= (Iterator<T1> const &lhs, Iterator<T2> const &rhs)
 		{
 			return lhs.get_ptr() <= rhs.get_ptr();
 		}
 
-	template<class T>
-		bool	operator >= (Iterator<T> const &lhs, Iterator<T> const &rhs)
+	template<class T1, class T2>
+		bool	operator >= (Iterator<T1> const &lhs, Iterator<T2> const &rhs)
 		{
 			return lhs.get_ptr() >= rhs.get_ptr();
 		}
