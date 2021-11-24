@@ -21,11 +21,11 @@ int	main()
 	std::vector<int> vec1(4,42);
 	std::vector<int> vec2(6,42);
 	vec1.push_back(88);
-
+	vec1=vec2;
 	debug<int>(vec1);
 	debug<int>(vec2);
 
-	std::cout << (vec1 > vec2) << std::endl;
+	std::cout << (vec1 <= vec2) << std::endl;
 
 	return 0;
 }

@@ -1,10 +1,8 @@
 #include "vector.hpp"
-#include <vector>
 #include <string>
-#include <iterator>
 #include <iomanip>
 
-int	main()
+int	foo()
 {
 	ft::vector<int> vec1;
 	ft::vector<int> vec2(42,42);
@@ -15,11 +13,28 @@ int	main()
 	vec1.debug();
 	vec2.debug();
 	vec3.debug();
+	std::cout << "vec2 == vec3: " << (vec2 == vec3) << std::endl;
+	std::cout << "vec1 == vec3: " << (vec1 == vec3) << std::endl;
+	std::cout << "vec1 < vec2: " << (vec1 < vec2) << std::endl;
+	std::cout << "vec1 > vec2: " << (vec1 > vec2) << std::endl;
+	std::cout << "vec1 <= vec2: " << (vec1 <= vec2) << std::endl;
+	std::cout << "vec2 <= vec3: " << (vec2 <= vec3) << std::endl;
 
+	return 0;
+}
 
-	vec2.swap(vec1);
+int	main()
+{	
+	int arr[] = {1, 2, 3, 4, 5, 6};
+	ft::vector<int> vec1(arr, arr + sizeof(arr)/sizeof(int));
+	
+	ft::vector<int>::reverse_iterator rev_it = vec1.rbegin();
+	ft::vector<int>::reverse_iterator rev_ite = vec1.rend();
 
-	vec2.debug();
-
+	while (rev_it!=rev_ite){
+		std::cout << *rev_it << std::endl;
+		rev_it++;
+	}
+	vec1.debug();
 	return 0;
 }

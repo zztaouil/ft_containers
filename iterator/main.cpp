@@ -32,7 +32,7 @@ int		main()
 	int arr[] = {1, 2, 3, 4, 5};
 
 	ft::random_access_iterator<int> it;
-	ft::reverse_iterator<random_access_iterator<int>> rit(it);
+	ft::reverse_iterator<random_access_iterator<int>> rev_it(it);
 
 	return 0;
 }

@@ -10,6 +10,8 @@
 # include <type_traits>
 # include "../iterator/random_access_iterator.hpp"
 # include "../iterator/reverse_iterator.hpp"
+# include "../iterator/equal.hpp"
+# include "../iterator/lexico_compare.hpp"
 
 namespace ft{
 	template <class T, class Allocator = std::allocator<T> >
@@ -60,7 +62,7 @@ namespace ft{
 				// C++ feature
 				//typename enable_if<!is_integral<InputIterator>::value,InputIterator >::type = InputIterator())
 				template <class InputIterator>
-				vector(InputIterator begin, InputIterator end, const allocator_type &alloc = allocator_type(), typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator >::type = InputIterator())
+					vector(InputIterator begin, InputIterator end, const allocator_type &alloc = allocator_type(), typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator >::type = InputIterator())
 					: _allocator(alloc), _size(end - begin), _capacity(_size){
 						_data = _allocator.allocate(_capacity);
 						for (size_type i=0; i < _size; i++){
@@ -74,12 +76,12 @@ namespace ft{
 
 				// vector::~vector
 				~vector(void){
-						if (_size != 0){
-							for (size_type i = 0; i < _size; i++)
-								_allocator.destroy(_data + i);
-						}
-						if (_capacity != 0)
-							_allocator.deallocate(_data, _capacity);
+					if (_size != 0){
+						for (size_type i = 0; i < _size; i++)
+							_allocator.destroy(_data + i);
+					}
+					if (_capacity != 0)
+						_allocator.deallocate(_data, _capacity);
 				}
 				// ;
 				vector &operator=(vector const &rhs){
@@ -108,11 +110,18 @@ namespace ft{
 				iterator		end(void){
 					return iterator(_data + _size);
 				}
-				reverse_iterator			rbegin(void);
-				const_reverse_iterator		rbegin(void) const;
-
-				reverse_iterator			rend(void);
-				reverse_iterator			rend(void) const;
+				reverse_iterator			rbegin(void){
+					return reverse_iterator(end());
+				}
+				const_reverse_iterator		rbegin(void) const{
+					return const_reverse_iterator(end());
+				}
+				reverse_iterator			rend(void){
+					return reverse_iterator(begin());
+				}
+				reverse_iterator			rend(void) const{
+					return const_reverse_iterator(begin());
+				}
 
 				// CAPACITY
 				size_type	size(void) const{
@@ -412,73 +421,46 @@ namespace ft{
 				size_type			_size;
 				size_type			_capacity;
 		};
-		template < class T, class Alloc>
+	/*
+	 *	a!=b	!(a==b)
+	 *	a>b	b<a
+	 *	a<=b	!(b<a)
+	 *	a>=b	!(a<b)
+	 * */
+	template < class T, class Alloc>
 		bool operator == (const vector<T,Alloc> &lhs, const vector<T,Alloc> &rhs){
 			if (lhs.size() == rhs.size())
-			{
-				for (size_t i = 0; i < lhs.size(); i++)
-					if (lhs.at(i) != rhs.at(i))
-						return false;
-				return true;
-			}
+				return ft::equal(lhs.begin(), lhs.end(), rhs.begin());
 			return false;
 		}
-		template <class T, class Alloc>
+	template <class T, class Alloc>
 		bool operator != (const vector<T,Alloc> &lhs, const vector<T,Alloc> &rhs){
-			int flag = 0;
 			if (lhs.size() == rhs.size())
-			{
-				for (size_t i = 0; i < lhs.size(); i++)
-					if (lhs.at(i) != rhs.at(i))
-						flag = 1;
-				if (flag)
-					return true;
-				else
-					return false;
-			}
+				return !ft::equal(lhs.begin(), lhs.end(), rhs.begin());
 			return true;
 		}
-		template <class T, class Alloc>
+	template <class T, class Alloc>
 		bool operator < (const vector<T,Alloc> &lhs, const vector<T,Alloc> &rhs){
-			size_t len = std::min(lhs.size(), rhs.size());
-			for (size_t i = 0; i < len; i++)
-			{
-				if (lhs.at(i) >= rhs.at(i))
-					return false;
-			}
-			return true;
+			return ft::lexicographical_compare(lhs.begin(), lhs.end()
+					, rhs.begin(), rhs.end());
 		}
-		template <class T, class Alloc>
+	template <class T, class Alloc>
 		bool operator <= (const vector<T,Alloc> &lhs, const vector<T,Alloc> &rhs){
-			size_t len = std::min(lhs.size(), rhs.size());
-			for (size_t i = 0; i < len; i++)
-			{
-				if (lhs.at(i) > rhs.at(i))
-					return false;
-			}
-			return true;
+			return !ft::lexicographical_compare(rhs.begin(), rhs.end(),
+					lhs.begin(), lhs.end());
 		}
-		template <class T, class Alloc>
+	template <class T, class Alloc>
 		bool operator > (const vector<T,Alloc> &lhs, const vector<T,Alloc> &rhs){
-			size_t len = std::min(lhs.size(), rhs.size());
-			for (size_t i = 0; i < len; i++)
-			{
-				if (lhs.at(i) <= rhs.at(i))
-					return false;
-			}
-			return true;
+			return ft::lexicographical_compare(rhs.begin(), rhs.end()
+					, lhs.begin(), lhs.end());
+
 		}
-		template <class T, class Alloc>
+	template <class T, class Alloc>
 		bool operator >= (const vector<T,Alloc> &lhs, const vector<T,Alloc> &rhs){
-			size_t len = std::min(lhs.size(), rhs.size());
-			for (size_t i = 0; i < len; i++)
-			{
-				if (lhs.at(i) < rhs.at(i))
-					return false;
-			}
-			return true;
+			return !ft::lexicographical_compare(lhs.begin(), lhs.end(),
+					rhs.begin(), rhs.end());
 		}
-		template <class T, class Alloc>
+	template <class T, class Alloc>
 		void	swap(vector<T,Alloc> &x, vector<T,Alloc> &y)
 		{
 			x.swap(y);
