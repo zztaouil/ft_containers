@@ -39,12 +39,27 @@ int	bar()
 	return 0;
 }
 
-int	main()
+int	bob()
 {	
 	int arr[] = {1, 2, 3, 4, 5, 6};
 	ft::vector<int> vec1(arr, arr + sizeof(arr)/sizeof(int));
+	ft::vector<int>::reverse_iterator rev_it = vec1.rbegin();
+	std::cout << rev_it[3] << std::endl;
 	for (ft::vector<int>::const_reverse_iterator it = vec1.rbegin(); it != vec1.rend(); it++){
 		std::cout << *it << std::endl;
 	}
+	return 0;
+}
+
+int	main()
+{
+	int arr[] = {1, 1, 2, 3, 5, 8, 13, 21};
+	ft::vector<int> vec1(arr, arr + sizeof(arr)/sizeof(int));
+	ft::vector<int>::reverse_iterator	rev_it1 = vec1.rbegin();
+	ft::vector<int>::reverse_iterator	rev_it2 = vec1.rbegin() + 3;
+
+	rev_it2 = rev_it1;
+	std::cout << *rev_it1 << std::endl;
+	std::cout << *rev_it2 << std::endl;
 	return 0;
 }

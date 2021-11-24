@@ -81,7 +81,7 @@ namespace ft{
 
 				// offset dereference operator []
 				value_type &operator [] (difference_type n){
-					return _ptr[n];	
+					return *(_ptr + n);	
 				}
 				// Conversion operator
 				operator Iterator<const T>() const{

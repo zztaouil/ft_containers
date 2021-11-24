@@ -258,7 +258,7 @@ namespace ft{
 					_size++;
 				}
 				void	pop_back(void){
-					_allocator.destroy(_data[_size - 1]);
+					_allocator.destroy(_data + _size - 1);
 					_size -= 1;
 				}
 				iterator 	insert (iterator position, value_type const &val){

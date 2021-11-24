@@ -19,8 +19,14 @@ namespace ft
 			reverse_iterator(void) {}
 			explicit reverse_iterator (iterator_type it) : _it(it){}
 			template <class Iter>
-			reverse_iterator(const reverse_iterator<Iter> &rev_it){
-				this->_it = rev_it.base();
+			reverse_iterator(reverse_iterator<Iter> const &rev_it){
+				*this = rev_it;
+			}
+			reverse_iterator	&operator= (reverse_iterator const &obj){
+				if (this != &obj){
+					this->_it = obj.base();
+				}
+				return *this;
 			}
 			iterator_type	base(void) const{
 				return _it;
@@ -67,11 +73,11 @@ namespace ft
 			pointer				operator->(void) const{
 				return &(operator*());
 			}
-			reference			operator[] (difference_type n) const{
-				reference tmp = _it[n];
-				return tmp;
+			reference			operator[] (difference_type n){
+				return *(_it - n);
 			}
 			operator	reverse_iterator<const Iterator>() const{
+				std::cout << "Conversion operator" << std::endl;
 				return reverse_iterator<const Iterator>(_it);
 			}
 		private:
