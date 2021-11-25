@@ -1,8 +1,6 @@
-#include "board.hpp"
 #include <iostream>
-#include "iterators.hpp"
 #include <string>
-
+#include "../vector/vector.hpp"
 /*
 int	main(void)
 {
@@ -29,10 +27,13 @@ int	main(void)
 
 int		main()
 {
-	int arr[] = {1, 2, 3, 4, 5};
+	ft::vector<int> vec1(6,42);
+	ft::vector<int>::reverse_iterator rev_it1 = vec1.rbegin();
+	ft::vector<int>::const_reverse_iterator rev_it2;
 
-	ft::random_access_iterator<int> it;
-	ft::reverse_iterator<random_access_iterator<int>> rev_it(it);
+	rev_it2 = rev_it1;
 
+	std::cout << *rev_it2 << std::endl;
+	std::cout << *rev_it1 << std::endl;
 	return 0;
 }

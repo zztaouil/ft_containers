@@ -119,7 +119,7 @@ namespace ft{
 				reverse_iterator			rend(void){
 					return reverse_iterator(begin());
 				}
-				reverse_iterator			rend(void) const{
+				const_reverse_iterator			rend(void) const{
 					return const_reverse_iterator(begin());
 				}
 
