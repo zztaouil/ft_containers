@@ -142,6 +142,10 @@ namespace ft{
 				// This function has no effect on the vector size and cannot alter its elements.
 				void	reserve(size_type n){
 					// This function causes the container to reallocate its storage increasing its capacity to n (or greater)
+					if (!n){
+						_data = _allocator.allocate(1);
+						_capacity = 1;
+					}
 					if (n > _capacity){
 						pointer	tmp = _allocator.allocate(n);
 						for (size_type i = 0;i < _size; i++){
@@ -268,6 +272,7 @@ namespace ft{
 					_allocator.destroy(_data + _size - 1);
 					_size -= 1;
 				}
+				// buffer overflow
 				iterator 	insert (iterator position, value_type const &val){
 					difference_type d = std::distance(begin(), position);
 					if (_size + 1 > _capacity){
@@ -340,6 +345,7 @@ namespace ft{
 							_size += l;
 						}
 					}
+				// this is fine
 				iterator 	erase(iterator position){
 					difference_type d = std::distance(begin(), position);
 					if (static_cast<size_type>(d) == _size - 1){
@@ -356,6 +362,8 @@ namespace ft{
 					}
 					return iterator(_data + d);
 				}
+				// I'm quiet sure that the return isn't working properly
+				// not so much!
 				iterator 	erase(iterator first, iterator last){
 					difference_type d = std::distance(begin(), first);
 					difference_type l = std::distance(first, last);
@@ -367,12 +375,12 @@ namespace ft{
 					}
 					else if (static_cast<size_type>(d + l) < _size - 1){
 						for (size_type i = static_cast<size_type>(d); i <= static_cast<size_type>(d + l); i++){
-							std::cout << _data[i] << std::endl;
+//							std::cout << _data[i] << std::endl;
 							_allocator.destroy(_data + i);
 						}
-						std::cout << std::endl;
+//						std::cout << std::endl;
 						for (size_type i = static_cast<size_type>(d + l) + 1; i < _size; i++){
-							std::cout << _data[i] << std::endl;
+//							std::cout << _data[i] << std::endl;
 							_allocator.construct(_data + i - l - 1, _data[i]);
 							_allocator.destroy(_data + i);
 						}
@@ -399,7 +407,8 @@ namespace ft{
 				// DEBUG
 
 				void	debug(void) const{
-					std::cout << std::setw(40) << std::right << "---------------------DEBUGG--------------" << std::endl;	
+					std::cout << std::setw(40) << std::right << "DEBUG-------------------------------------------------------------------------" 
+						<< std::endl;	
 					std::cout << "_data" << std::endl;	
 					std::cout << "[";
 					if (_size > 1){
@@ -411,15 +420,13 @@ namespace ft{
 						std::cout << _data[_size-1];
 					}
 					std::cout << "]" << std::endl;
-					std::cout << "----------------------------------------" << std::endl;	
+					std::cout << "------------------------------------------------------------------------------" << std::endl;	
 					std::cout << "_size" << std::endl;	
 					std::cout << _size << std::endl;
-					std::cout << "----------------------------------------" << std::endl;	
+					std::cout << "------------------------------------------------------------------------------" << std::endl;	
 					std::cout << "_capacity" << std::endl;	
 					std::cout << _capacity << std::endl;
-					std::cout << std::setw(40) << "----------------------------------------" << std::endl;	
-
-
+					std::cout << std::setw(40) << "==============================================================================" << std::endl;
 				}
 
 			private:

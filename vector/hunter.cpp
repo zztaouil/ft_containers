@@ -53,13 +53,12 @@ int	bob()
 
 int	main()
 {
-	int arr[] = {1, 1, 2, 3, 5, 8, 13, 21};
-	ft::vector<int> vec1(arr, arr + sizeof(arr)/sizeof(int));
-	ft::vector<int>::reverse_iterator	rev_it1 = vec1.rbegin();
-	ft::vector<int>::reverse_iterator	rev_it2 = vec1.rbegin() + 3;
+//	int arr[] = {1, 1, 2, 3, 5, 8, 13, 21};
+//	ft::vector<int> vec1(arr, arr + sizeof(arr)/sizeof(int));
+	ft::vector<int> vec1;
 
-	rev_it2 = rev_it1;
-	std::cout << *rev_it1 << std::endl;
-	std::cout << *rev_it2 << std::endl;
+	vec1.debug();
+	vec1.insert(vec1.begin(), 43);
+	vec1.debug();
 	return 0;
 }
