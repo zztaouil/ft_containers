@@ -42,13 +42,14 @@ namespace ft
 					tmp -= n;
 					return reverse_iterator(tmp);
 				}
-				reverse_iterator	&operator++(int){
-					reverse_iterator* tmp = this;
-					this->_it--;
-					return *tmp;
+				reverse_iterator	operator++(int){
+					reverse_iterator tmp = *this;
+					++(*this);
+					return tmp;
 				}
-				reverse_iterator	operator++(void){
-					return reverse_iterator(_it--);
+				reverse_iterator	&operator++(void){
+					--(this->_it);
+					return *this;
 				}
 				reverse_iterator	&operator+=(difference_type n){
 					_it -= n;
@@ -63,19 +64,20 @@ namespace ft
 					tmp += n;
 					return reverse_iterator(tmp);
 				}
-				reverse_iterator	&operator--(int){
-					reverse_iterator* tmp = this;
-					this->_it++;
-					return *tmp;
+				reverse_iterator	operator--(int){
+					reverse_iterator tmp = *this;
+					--(*this);
+					return tmp;
 				}
-				reverse_iterator	operator--(void){
-					return reverse_iterator(_it++);
+				reverse_iterator	&operator--(void){
+					++(this->_it);
+					return *this;
 				}
 				pointer				operator->(void) const{
 					return &(operator*());
 				}
 				reference			operator[] (difference_type n){
-					return *(_it - n);
+					return *(_it - n - 1);
 				}
 				operator	reverse_iterator<const iterator_type>() const{
 					//std::cout << "reverse iterator conversion operator" << std::endl;
@@ -97,7 +99,7 @@ namespace ft
 				const reverse_iterator<Iterator>& lhs,
 				const reverse_iterator<Iterator>& rhs)
 		{
-			return lhs.base() - rhs.base();
+			return rhs.base() - lhs.base();
 		}
 	template <class Iterator1, class Iterator2>
 		bool	operator== (const reverse_iterator<Iterator1>& lhs,

@@ -3,6 +3,8 @@
 
 # define DEFAULT_CAPACITY 0
 
+# include <string>
+# include <stdexcept>
 # include <iomanip>
 # include <cstddef>
 # include <iostream>
@@ -31,7 +33,7 @@ namespace ft{
 				typedef ptrdiff_t				difference_type;
 
 				// Exceptions
-				class outOfRangeException : public std::exception{
+				class out_of_range : public std::exception{
 					public:
 						virtual const char *what(void) const throw(){
 							return "out_of_range";
@@ -43,7 +45,6 @@ namespace ft{
 							return "vector_is_empty";
 						}
 				};
-
 				// vector::vector
 				explicit vector (const allocator_type& alloc = allocator_type()) : _allocator(alloc), _size(DEFAULT_CAPACITY), _capacity(DEFAULT_CAPACITY){
 					_data = _allocator.allocate(DEFAULT_CAPACITY);
@@ -156,25 +157,31 @@ namespace ft{
 				// If n is greater than the current container size, the content is expanded by insert at the end as many elements as needed
 				//to reach a size of n. if val is specified, the new elements are initialized as copies of val, otherwise, they are
 				//value-initialized
+				// The function throws length_error if n is greater than max_size.
+				// Does it reallocate?
+				// Yes in case (n > _capacity)
 				void resize (size_type n, value_type val = value_type()){
-					if (n < _capacity){
-						pointer tmp = _allocator.allocate(n);
-						size_type i = 0;
-						for (; i < n; i++){
-							_allocator.construct(tmp + i, _data[i]);
+					if (n > max_size())
+						throw std::length_error("length_error");
+					else if (n < _size){
+					 	for (size_type i = n; i < _size; i++)
 							_allocator.destroy(_data + i);
-						}
-						for (; i < _size; i++)
-							_allocator.destroy(_data + i);
-						_allocator.deallocate(_data, _capacity);
-						_capacity = n;
 						_size = n;
-						_data = tmp;
 					}
-					else{
-						reserve(n);
+					else if (n > _size && n <= _capacity){
 						while (_size < n)
 						{
+							_allocator.construct(_data + _size, val);
+							_size++;
+						}
+					}
+					else if (n > _capacity)
+					{
+						if (n > _capacity * 2)
+							reserve(n);
+						else
+							reserve(2*_capacity);
+						while (_size < n){
 							_allocator.construct(_data + _size, val);
 							_size++;
 						}
@@ -192,12 +199,12 @@ namespace ft{
 				}
 				const_reference	at(size_t n) const{
 					if (n >= _size)
-						throw outOfRangeException();
+						throw std::out_of_range("out_of_range");
 					return _data[n];
 				}
 				reference	at(size_t n){
 					if (n >= _size)
-						throw outOfRangeException();
+						throw std::out_of_range("out_of_range");
 					return _data[n];
 				}
 				const_reference	front(void) const{				

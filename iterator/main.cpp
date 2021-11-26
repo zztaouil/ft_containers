@@ -1,6 +1,9 @@
 #include <iostream>
 #include <string>
+#include <vector>
+#include <iterator>
 #include "../vector/vector.hpp"
+
 /*
 int	main(void)
 {
@@ -27,13 +30,19 @@ int	main(void)
 
 int		main()
 {
-	ft::vector<int> vec1(6,42);
-	ft::vector<int>::reverse_iterator rev_it1 = vec1.rbegin();
-	ft::vector<int>::const_reverse_iterator rev_it2;
+	int arr[] = {1, 1, 2, 3, 5, 8, 13};
+	std::vector<int> vec(arr, arr + sizeof(arr)/sizeof(int));
+	ft::vector<int> my_vec(arr, arr + sizeof(arr)/sizeof(int));
+	std::vector<int>::reverse_iterator rev_it1 = vec.rbegin();
+	ft::vector<int>::reverse_iterator my_rev_it1 = my_vec.rbegin();
+//	std::vector<int>::reverse_iterator rev_it2 = vec.rend();
+//	ft::vector<int>::reverse_iterator my_rev_it2 = my_vec.rend();
 
-	rev_it2 = rev_it1;
 
-	std::cout << *rev_it2 << std::endl;
+	std::cout << *rev_it1++ << std::endl;
+	std::cout << *my_rev_it1++ << std::endl;
+
 	std::cout << *rev_it1 << std::endl;
+	std::cout << *my_rev_it1 << std::endl;
 	return 0;
 }
