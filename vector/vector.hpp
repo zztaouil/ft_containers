@@ -46,7 +46,8 @@ namespace ft{
 						}
 				};
 				// vector::vector
-				explicit vector (const allocator_type& alloc = allocator_type()) : _allocator(alloc), _size(DEFAULT_CAPACITY), _capacity(DEFAULT_CAPACITY){
+				explicit vector (const allocator_type& alloc = allocator_type()) :
+					_allocator(alloc), _size(DEFAULT_CAPACITY), _capacity(DEFAULT_CAPACITY){
 					_data = _allocator.allocate(DEFAULT_CAPACITY);
 					(void)alloc;
 				}
@@ -63,7 +64,9 @@ namespace ft{
 				// C++ feature
 				//typename enable_if<!is_integral<InputIterator>::value,InputIterator >::type = InputIterator())
 				template <class InputIterator>
-					vector(InputIterator begin, InputIterator end, const allocator_type &alloc = allocator_type(), typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator >::type = InputIterator())
+					vector(InputIterator begin, InputIterator end, const allocator_type &alloc = allocator_type(),
+							typename std::enable_if<!std::is_integral<InputIterator>::value,
+							InputIterator >::type = InputIterator())
 					: _allocator(alloc), _size(end - begin), _capacity(_size){
 						_data = _allocator.allocate(_capacity);
 						for (size_type i=0; i < _size; i++){
@@ -157,13 +160,13 @@ namespace ft{
 						_data = tmp;
 					}
 				}
-				// If n is smaller than the current container size, the content is reduced to its first n elements, destroying those beyond
-				// If n is greater than the current container size, the content is expanded by insert at the end as many elements as needed
-				//to reach a size of n. if val is specified, the new elements are initialized as copies of val, otherwise, they are
-				//value-initialized
-				// The function throws length_error if n is greater than max_size.
-				// Does it reallocate?
-				// Yes in case (n > _capacity)
+// If n is smaller than the current container size, the content is reduced to its first n elements, destroying those beyond
+// If n is greater than the current container size, the content is expanded by insert at the end as many elements as needed
+//to reach a size of n. if val is specified, the new elements are initialized as copies of val, otherwise, they are
+//value-initialized
+// The function throws length_error if n is greater than max_size.
+// Does it reallocate?
+// Yes in case (n > _capacity)
 				void resize (size_type n, value_type val = value_type()){
 					if (n > max_size())
 						throw std::length_error("length_error");
@@ -273,6 +276,7 @@ namespace ft{
 					_size -= 1;
 				}
 				// buffer overflow
+				// owned
 				iterator 	insert (iterator position, value_type const &val){
 					difference_type d = std::distance(begin(), position);
 					if (_size + 1 > _capacity){
@@ -318,7 +322,9 @@ namespace ft{
 					}
 				}
 				template <class InputIterator>
-					void		insert (iterator position, InputIterator first, InputIterator last, typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type = InputIterator()){
+					void		insert (iterator position, InputIterator first, InputIterator last,
+							typename std::enable_if<!std::is_integral<InputIterator>::value,
+							InputIterator>::type = InputIterator()){
 						difference_type d = std::distance(begin(), position);
 						difference_type l = std::distance(first, last);
 						if (l + _size > _capacity)
@@ -364,29 +370,30 @@ namespace ft{
 				}
 				// I'm quiet sure that the return isn't working properly
 				// not so much!
+				// This is quite a pickle
+				// Yeah all done
 				iterator 	erase(iterator first, iterator last){
 					difference_type d = std::distance(begin(), first);
 					difference_type l = std::distance(first, last);
 
-					if (d + l == static_cast<difference_type>(_size) - 1){
+					if (static_cast<size_type>(l) == _size)
+						clear();
+					else if (d + l == static_cast<difference_type>(_size)){
 						for (size_type i = static_cast<size_type>(d); i < _size; i++)
 							_allocator.destroy(_data + i);
 						_size -= l;
 					}
-					else if (static_cast<size_type>(d + l) < _size - 1){
+					else if (static_cast<size_type>(d + l) < _size){
 						for (size_type i = static_cast<size_type>(d); i <= static_cast<size_type>(d + l); i++){
-//							std::cout << _data[i] << std::endl;
 							_allocator.destroy(_data + i);
 						}
-//						std::cout << std::endl;
-						for (size_type i = static_cast<size_type>(d + l) + 1; i < _size; i++){
-//							std::cout << _data[i] << std::endl;
-							_allocator.construct(_data + i - l - 1, _data[i]);
+						for (size_type i = static_cast<size_type>(d + l); i < _size; i++){
+							_allocator.construct(_data + i - l, _data[i]);
 							_allocator.destroy(_data + i);
 						}
-						_size -= l + 1;
+						_size -= l;
 					}
-					return iterator(_data);
+					return iterator(_data + d);
 				}
 				void		swap(vector &x){
 					std::swap(this->_capacity, x._capacity);
@@ -430,7 +437,7 @@ namespace ft{
 				}
 
 			private:
-				allocator_type		_allocator;
+				allocator_type			_allocator;
 				pointer				_data;
 				size_type			_size;
 				size_type			_capacity;
