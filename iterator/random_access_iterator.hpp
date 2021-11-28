@@ -95,6 +95,8 @@ namespace ft{
 				pointer _ptr;
 		};
 
+	// non member overloads
+	
 	//Arithmetic overloads
 	template<class T>
 		Iterator<T>	operator + (typename std::iterator<std::random_access_iterator_tag, T>::difference_type n, Iterator<T> const &rhs)
@@ -144,7 +146,7 @@ namespace ft{
 		{
 			return lhs.get_ptr() >= rhs.get_ptr();
 		}
-	// non member overloads
+	// ostream operator overload
 	template<class T>
 		std::ostream	&operator << (std::ostream &o, Iterator<T> const &obj)
 		{
