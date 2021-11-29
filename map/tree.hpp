@@ -67,7 +67,8 @@ namespace ft
 			if (root == NULL)
 				return ;
 			inorder_del(root->left);
-			delete root;
+			if (root != NULL)	
+				delete root;
 			inorder_del(root->right);
 		}
 }
