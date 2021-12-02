@@ -1,6 +1,8 @@
 #ifndef PAIR_HPP
 # define PAIR_HPP
 
+# include <iostream>
+
 namespace ft
 {
 	// ft::pair
@@ -14,7 +16,7 @@ namespace ft
 					*this = pr;
 				}
 			pair (const first_type& a, const second_type &b)
-			: first(a), second(b){}
+				: first(a), second(b){}
 			pair& operator= (const pair& pr){
 				if (this != &pr){
 					first = pr.first;
@@ -55,5 +57,12 @@ namespace ft
 		pair<T1,T2>	make_pair(T1 x, T2 y){
 			return pair<T1,T2>(x,y);
 		}
+
+	template <class T1, class T2>
+		std::ostream	&operator<<(std::ostream& o, pair<T1,T2>const & rhs){
+			o << "first: " << rhs.first << " | second: " << rhs.second << std::endl;
+			return o;
+		}
 }
+
 #endif

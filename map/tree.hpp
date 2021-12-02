@@ -14,15 +14,18 @@ namespace ft
 			pair<T1,T2> data;
 			node* left;
 			node* right;
+			node* parent;
 		};
 	template <class T1, class T2>
-		node<T1,T2>*	new_node(pair<T1,T2> Data){
+		node<T1,T2>*	new_node(pair<T1,T2> Data, node<T1,T2>* Parent){
 			node<T1,T2>* node = new ft::node<T1,T2>;
 			node->data = Data;
 			node->left = NULL;
 			node->right = NULL;
+			node->parent = Parent;
 			return node;
 		}
+// SEARCHING
 	template <class T1, class T2>
 		node<T1,T2>*	search(node<T1,T2>* root, T1 key){
 // subtree with root root null
@@ -37,8 +40,11 @@ namespace ft
 				return search(root->left, key);
 // else key is larger than the root's key
 // search the right child of root
- 			return search(root->right, key);
+			else	
+				return search(root->right, key);
 		}
+
+// INSERTION
 // A new key is always inserted at the leaf. We start searching a key from
 // the root until we hit a leaf node. Once a leaf node is found, the new 
 // node is added as a chilf of the leaf node
@@ -46,7 +52,7 @@ namespace ft
 		void		insert(node<T1,T2>** root, pair<T1,T2> data){
 // if subtree is empty
 			if (*root == NULL){
-				*root = new_node(data);
+				*root = new_node(data, *root);
 				return ;
 			}
 			if (data.first > (*root)->data.first)
@@ -54,6 +60,8 @@ namespace ft
 			else	
 				insert(&((*root)->left), data);
 		}
+
+// DEPTH FIRST TRAVERSAL	
 	template <class T1, class T2>
 		void		inorder(node<T1,T2>* root){
 			if (root == NULL)
@@ -63,13 +71,69 @@ namespace ft
 			inorder(root->right);
 		}
 	template <class T1, class T2>
-		void		inorder_del(node<T1,T2>* root){
+		void		preorder(node<T1,T2>* root){
 			if (root == NULL)
 				return ;
-			inorder_del(root->left);
-			if (root != NULL)	
-				delete root;
-			inorder_del(root->right);
+			std::cout << root->data.first << " " << root->data.second << std::endl;
+			preorder(root->left);
+			preorder(root->right);
 		}
+	template <class T1, class T2>
+		void		postorder(node<T1,T2>* root){
+			if (root == NULL)
+				return ;
+			postorder(root->left);
+			postorder(root->right);
+			std::cout << root->data.first << " " << root->data.second << std::endl;
+		}
+	template <class T1, class T2>
+		void		postorder_free(node<T1,T2>* root){
+			if (root == NULL)
+				return ;
+			postorder_free(root->left);
+			postorder_free(root->right);
+			delete root;
+		}
+// MAXIMUM AND MINIMUM 
+	template <class T1, class T2>
+		node<T1,T2>*	tree_max(node<T1,T2>* root){
+			while (root->right != NULL)
+				root=root->right;
+			return root;
+		}
+	template<class T1, class T2>
+		node<T1,T2>*	tree_min(node<T1,T2>* root){
+			while (root->left != NULL)
+				root = root->left;
+			return root;
+		}
+// Succesor and predecessor
+// Node Parent
+	template<class T1, class T2>
+		
+// the successor of a node x is the node with the smallest key greater than x's key.
+	template <class T1, class T2>
+		node<T1,T2>*	tree_successor(node<T1,T2>* x){
+			if (x->right != NULL)
+				return tree_min(x->right);
+			node<T1,T2>*	y=x->parent;
+			while (y!=NULL && x == y->right){
+				x = y;
+				y = y->parent;
+			}
+			return y;
+		}
+	template <class T1, class T2>
+		node<T1,T2>*	tree_predecessor(node<T1,T2>* x){
+			if (x->left != NULL)
+				return tree_max(x->left);
+			node<T1,T2>* y=x->parent;
+			while (y!=NULL && x == y->left){
+				x = y;
+				y = y->parent;
+			}
+			return y;
+		}
+
 }
 #endif

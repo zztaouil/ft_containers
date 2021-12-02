@@ -13,8 +13,20 @@ int	main()
 	ft::insert<int,int>(&root, ft::make_pair<int,int>(42, 9));
 	ft::insert<int,int>(&root, ft::make_pair<int,int>(7, 96));
 
+	std::cout << "pre order tree traversal" << std::endl;
+	ft::preorder(root);
+	std::cout << "in order tree traversal" << std::endl;
 	ft::inorder(root);
+	std::cout << "post order tree traversal" << std::endl;
+	ft::postorder(root);
 
-	ft::inorder_del(root);	
+	std::cout << "maximum node: " << ft::tree_max(root)->data << std::endl;
+	
+
+	std::cout << "minimum node: " << ft::tree_min(root)->data << std::endl;
+	
+
+
+	ft::postorder_free(root);
 	return 0;
 }
