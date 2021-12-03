@@ -109,7 +109,6 @@ namespace ft
 		}
 // Succesor and predecessor
 // Node Parent
-	template<class T1, class T2>
 		
 // the successor of a node x is the node with the smallest key greater than x's key.
 	template <class T1, class T2>
@@ -134,6 +133,16 @@ namespace ft
 			}
 			return y;
 		}
-
+	template <class T1, class T2>
+		size_t	tree_height(node<T1,T2>* root){
+			if (root == NULL)
+				return -1;
+			size_t left_height = tree_height(root->left);
+			size_t right_height = tree_height(root->right);
+			if (left_height > right_height)
+				return left_height+1;
+			else
+				return right_height+1;
+		}
 }
 #endif

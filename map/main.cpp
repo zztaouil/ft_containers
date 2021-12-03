@@ -3,6 +3,9 @@
 #include <stdlib.h>
 // namespace ft
 // heap use after free. visiting a node two times
+// free with postorder traversal
+// 
+//
 int	main()
 {
 	ft::node<int,int>*	root = ft::new_node<int,int>(ft::make_pair<int,int>(1,69));
@@ -25,7 +28,7 @@ int	main()
 
 	std::cout << "minimum node: " << ft::tree_min(root)->data << std::endl;
 	
-
+	std::cout << "tree height: " << ft::tree_height(root) << std::endl;
 
 	ft::postorder_free(root);
 	return 0;
