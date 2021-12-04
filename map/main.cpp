@@ -3,9 +3,6 @@
 #include <stdlib.h>
 // namespace ft
 // heap use after free. visiting a node two times
-// free with postorder traversal
-// 
-//
 int	main()
 {
 	ft::node<int,int>*	root = ft::new_node<int,int>(ft::make_pair<int,int>(1,69));
