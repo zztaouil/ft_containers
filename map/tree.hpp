@@ -67,14 +67,16 @@ namespace ft
 			if (root == NULL)
 				return ;
 			inorder(root->left);
-			std::cout << root->data.first << " " << root->data.second << std::endl;
+			std::cout << root->data.first << " " <<
+				root->data.second << std::endl;
 			inorder(root->right);
 		}
 	template <class T1, class T2>
 		void		preorder(node<T1,T2>* root){
 			if (root == NULL)
 				return ;
-			std::cout << root->data.first << " " << root->data.second << std::endl;
+			std::cout << root->data.first << " " <<
+				root->data.second << std::endl;
 			preorder(root->left);
 			preorder(root->right);
 		}
@@ -84,7 +86,8 @@ namespace ft
 				return ;
 			postorder(root->left);
 			postorder(root->right);
-			std::cout << root->data.first << " " << root->data.second << std::endl;
+			std::cout << root->data.first << " " <<
+				root->data.second << std::endl;
 		}
 	template <class T1, class T2>
 		void		postorder_free(node<T1,T2>* root){
@@ -110,7 +113,8 @@ namespace ft
 // Succesor and predecessor
 // Node Parent
 		
-// the successor of a node x is the node with the smallest key greater than x's key.
+// the successor of a node x is the node with the smallest key greater than
+// x's key.
 	template <class T1, class T2>
 		node<T1,T2>*	tree_successor(node<T1,T2>* x){
 			if (x->right != NULL)
