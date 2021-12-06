@@ -60,7 +60,7 @@ namespace ft
 
 	template <class T1, class T2>
 		std::ostream	&operator<<(std::ostream& o, pair<T1,T2>const & rhs){
-			o << "first: " << rhs.first << " | second: " << rhs.second << std::endl;
+			o << "(" << rhs.first << "," << rhs.second << ")";
 			return o;
 		}
 }

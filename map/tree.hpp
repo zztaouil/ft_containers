@@ -89,6 +89,7 @@ namespace ft
 			std::cout << root->data.first << " " <<
 				root->data.second << std::endl;
 		}
+	// del
 	template <class T1, class T2>
 		void		postorder_free(node<T1,T2>* root){
 			if (root == NULL)
