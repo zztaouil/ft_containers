@@ -95,7 +95,7 @@ namespace ft
 			typedef Alloc		allocator_type;
 
 			tree(const allocator_type& alloc = allocator_type())
-				: root(0), allocator(alloc){
+				:root(0), allocator(alloc){
 					std::cout << "Hello, World!" << std::endl;
 				}
 			~tree(void){
@@ -152,8 +152,14 @@ namespace ft
 				update_bf(Root->right);
 			}
 			// deletion
-			// can't delete root of tree? why?
-			void	tree_delete(Node* T, Node* z){
+			void	tree_delete(Node** T, Node* z){
+				if (z == NULL)
+						return ;
+				tree_delete_ext(T,z);
+				update_bf(*T);
+			}
+			// can't delete root of tree? why? FIXED
+			void	tree_delete_ext(Node** T, Node* z){
 				if (z->left == NULL)
 					subtree_shift(T, z, z->right);
 				else if (z->right == NULL)
@@ -169,17 +175,17 @@ namespace ft
 					y->left = z->left;
 					y->left->parent = y;
 				}
+				allocator.deallocate(z, 1);
 			}
-			void	subtree_shift(Node* T, Node* u, Node* v){
+			void	subtree_shift(Node** T, Node* u, Node* v){
 				if (u->parent == NULL)
-					T = v;
+					*T = v;
 				else if (u == u->parent->left)
 					u->parent->left = v;
 				else
 					u->parent->right = v;
 				if (v != NULL)
 					v->parent = u->parent;
-				allocator.deallocate(u, 1);
 			}
 			// free the tree in postorder traversal
 			void	tree_free(Node* Root){
@@ -212,7 +218,7 @@ namespace ft
 			// tree successor
 			Node*	tree_successor(Node* x){
 				if (x->right != NULL)
-					return tree_min(x);
+					return tree_min(x->right);
 				Node* y = x->parent;
 				while (y != NULL && x == y->right){
 					x = y;
@@ -223,7 +229,7 @@ namespace ft
 			// tree predecessor
 			Node*	tree_predecessor(Node* x){
 				if (x->left != NULL)
-					return tree_max(x);
+					return tree_max(x->left);
 				Node* y = x->parent;
 				while (y != NULL && x == y->left){
 					x = y;
@@ -260,10 +266,9 @@ namespace ft
 				}
 			}
 			void	tree_debug(const Node* root){
-				tree_debug("", root, false);
+				std::cout << std::endl;
+				tree_debug("$", root, false);
 			}
-			// T
-			Node**	T;
 			// root node
 			Node*	root;
 			// allocator
