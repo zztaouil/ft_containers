@@ -152,6 +152,7 @@ namespace ft
 				update_bf(Root->right);
 			}
 			// deletion
+			// can't delete root of tree? why?
 			void	tree_delete(Node* T, Node* z){
 				if (z->left == NULL)
 					subtree_shift(T, z, z->right);
@@ -178,6 +179,7 @@ namespace ft
 					u->parent->right = v;
 				if (v != NULL)
 					v->parent = u->parent;
+				allocator.deallocate(u, 1);
 			}
 			// free the tree in postorder traversal
 			void	tree_free(Node* Root){

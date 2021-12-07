@@ -18,13 +18,13 @@ int		main()
 //	t1.insert(&t1.root, ft::make_pair('X', 'g'));
 //	t1.insert(&t1.root, ft::make_pair('Q', 'g'));
 //	t1.insert(&t1.root, ft::make_pair('U', 'g'));
-	t1.insert(&t1.root, ft::make_pair('z', 'o'));
-	t1.insert(&t1.root, ft::make_pair('r','o'));
-//	t1.insert(&t1.root, ft::make_pair('y','o');
+	t1.insert(&t1.root, ft::make_pair('i', 'o'));
+	t1.insert(&t1.root, ft::make_pair('z','o'));
+	t1.insert(&t1.root, ft::make_pair('a','o'));
 	
 
 	t1.tree_debug(t1.root);
-	t1.tree_delete(t1.root, t1.tree_search(t1.root, ft::make_pair('P','c')));
+	t1.tree_delete(t1.root, t1.tree_search(t1.root, ft::make_pair('z','o')));
 	t1.tree_debug(t1.root);
 //	t1.tree_inorder(t1.root);
 //	std::cout << "tree max: " << t1.tree_max(t1.root)->data << std::endl;
