@@ -262,6 +262,8 @@ namespace ft
 			void	tree_debug(const Node* root){
 				tree_debug("", root, false);
 			}
+			// T
+			Node**	T;
 			// root node
 			Node*	root;
 			// allocator
