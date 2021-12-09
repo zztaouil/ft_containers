@@ -142,6 +142,7 @@ namespace ft
 			void	insert(Node** Root, Data data){
 				insert_ext(Root,data);
 				update_bf(*Root);
+				rebalance(*Root);
 			}
 			void	update_bf(Node* Root){
 				if (Root == NULL)
@@ -157,6 +158,7 @@ namespace ft
 						return ;
 				tree_delete_ext(T,z);
 				update_bf(*T);
+				rebalance(*T);
 			}
 			// can't delete root of tree? why? FIXED
 			void	tree_delete_ext(Node** T, Node* z){
@@ -248,6 +250,66 @@ namespace ft
 				else
 					return right_height+1;
 			}
+			/*======================================================*/
+			// REBALANCING
+			//  If during a modifying operation the height difference between
+			// two child subtrees changes, this may, as long as it is <2, be
+			// reflected by an adaption of the balance information at the parent.
+			// During insert and delete operations as (temporary) height difference
+			// of 2 nay arise, which means that the parent subtree has to be
+			// "rebalanced". The giben repair tools are the so-called "'tree rotations'"
+			//
+			void	rebalance(Node* Root){
+				if (Root == NULL)
+					return ;
+				rebalance(Root->left);
+				rebalance(Root->right);
+				if (Root->bf == 2)
+					rotate_left(Root, Root->right);
+			}
+			// rotate left bf +2
+			Node*	rotate_left(Node* X, Node* Z){
+				Node* papa = X->parent;
+				Node* t23 = Z->left;
+				X->right = t23;
+				if (t23 != NULL)
+					t23->parent = X;
+				Z->left = X;
+				X->parent = Z;
+				Z->parent = papa;
+				papa->right = Z;
+				if (Z->bf == 0){
+					X->bf = 1;
+					Z->bf = -1;
+				}else{
+					X->bf = 0;
+					Z->bf = 0;
+				}
+				return Z;
+				// parent of X right node should be pointing to Z;
+				// X should be replaced by Z in root node.
+			}
+			// have to take a closer look into this!
+			// not sure if it's working as intended :3
+			// rotate right bf -2
+			Node*	rotate_right(Node* X, Node* Z)
+			{
+				Node* t23 = Z->left;
+				X->left = t23;
+				if (t23 != NULL)
+					t23->parent = X;
+				Z->right = X;
+				X->parent = Z;
+				if (Z->bf == 0){
+					X->bf = 1;
+					Z->bf = -1;
+				}else{
+					X->bf = 0;
+					Z->bf = 0;
+				}
+				return Z;
+			}
+			/*======================================================*/
 			// debug tree
 			void	tree_debug(const std::string &prefix,
 					const Node* node, bool isLeft){

@@ -25,9 +25,7 @@ int		main()
 
 	t1.tree_debug(t1.root);
 	t1.tree_delete(&t1.root, t1.tree_search(t1.root, ft::make_pair('J','a')));
-	t1.tree_delete(&t1.root, t1.tree_search(t1.root, ft::make_pair('F','b')));
 	t1.tree_debug(t1.root);
-
 //	t1.tree_inorder(t1.root);
 //	std::cout << "tree max: " << t1.tree_max(t1.root)->data << std::endl;
 //	std::cout << "tree min: " << t1.tree_min(t1.root)->data << std::endl;
