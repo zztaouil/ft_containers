@@ -142,7 +142,7 @@ namespace ft
 			void	insert(Node** Root, Data data){
 				insert_ext(Root,data);
 				update_bf(*Root);
-				rebalance(*Root);
+				// rebalance(*Root);
 			}
 			void	update_bf(Node* Root){
 				if (Root == NULL)
