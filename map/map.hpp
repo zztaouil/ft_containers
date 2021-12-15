@@ -72,7 +72,7 @@ namespace ft
 		// MODIFIERS
 			// single elemet (1)
 			ft::pair<iterator, bool> insert (const value_type& val);
-			// with hint (2)
+			// with hint (2) i.e pos
 			iterator	insert (iterator position, const value_type& val);
 			// range(3)
 			template <class InputIterator>

@@ -12,6 +12,7 @@ namespace ft
 			node* left;
 			node* right;
 			node* parent;
+			// balance factor
 			int	bf;
 		};
 	template <class T1, class T2, class Alloc =
@@ -50,26 +51,29 @@ namespace ft
 			}
 			// insertion
 			void	insert_ext(Node** Root, Data data){
-				if (*Root == NULL){
-					*Root = node_new(data, NULL);
-					return ;
-				}
-				if ((*Root)->left==NULL || (*Root)->right==NULL){
-					if (data.first > (*Root)->data.first)
-						(*Root)->right = node_new(data, *Root);
+				Node*	y = NULL;
+				Node*	x = *Root;
+				while (x != NULL){
+					y = x;
+					if (data.first < x->data.first)
+						x = x->left;
 					else
-						(*Root)->left = node_new(data, *Root);
-					return ;
+						x = x->right;
 				}
-				if (data.first > (*Root)->data.first)
-					insert(&((*Root)->right), data);
+				Node* z = node_new(data, y);
+				if (y == NULL){
+					*Root = z;
+				}
+				else if (z->data.first < y->data.first)
+					y->left = z;
 				else
-					insert(&((*Root)->left), data);
+					y->right = z;
 			}
 			void	insert(Node** Root, Data data){
 				insert_ext(Root,data);
 				update_bf(*Root);
-				// rebalance(*Root);
+				rebalance(*Root);
+				std::cerr << "#" << std::endl;
 			}
 			void	update_bf(Node* Root){
 				if (Root == NULL)
@@ -184,27 +188,46 @@ namespace ft
 			// reflected by an adaption of the balance information at the parent.
 			// During insert and delete operations as (temporary) height difference
 			// of 2 nay arise, which means that the parent subtree has to be
-			// "rebalanced". The giben repair tools are the so-called "'tree rotations'"
+			// "rebalanced". The given repair tools are the so-called "tree rotations"
 			//
 			void	rebalance(Node* Root){
 				if (Root == NULL)
 					return ;
+//				std::cerr << Root << " " << Root->data << " " << Root->bf << std::endl;
+				if (Root->bf == 2 && Root->right->bf > 0){
+//					std::cerr << "left rot " << Root->data << " " << Root->right->data << " " << Root->bf << std::endl;
+//					return ;
+					rotate_left(Root, Root->right);
+				}
+				if (Root->bf == -2 && Root->left->bf < 0){
+//					std::cerr << "right rot " << Root->data << " " << Root->left->data << std::endl;
+//					return ;
+					rotate_right(Root, Root->left);
+				}
 				rebalance(Root->left);
 				rebalance(Root->right);
-				if (Root->bf == 2)
-					rotate_left(Root, Root->right);
-			}
+		}
 			// rotate left bf +2
 			Node*	rotate_left(Node* X, Node* Z){
+				std::cerr << "did he enter here?" << std::endl;
 				Node* papa = X->parent;
-				Node* t23 = Z->left;
-				X->right = t23;
-				if (t23 != NULL)
-					t23->parent = X;
+				Node* y = Z->left;
+				X->right = y;
+				if (y != NULL)
+					y->parent = X;
 				Z->left = X;
 				X->parent = Z;
 				Z->parent = papa;
-				papa->right = Z;
+				if (papa == NULL)
+					this->root = Z;
+				// Questionable? this is a special case.
+				// if papa->right == X
+				// if papa->left == X
+//				std::cerr << "Yes, " << (papa->right == X) << " " << (papa->left == X) << std::endl;
+				if (papa  && papa->right == X)
+					papa->right = Z;
+				if (papa && papa->left == X)
+					papa->left = Z;
 				if (Z->bf == 0){
 					X->bf = 1;
 					Z->bf = -1;
@@ -221,12 +244,20 @@ namespace ft
 			// rotate right bf -2
 			Node*	rotate_right(Node* X, Node* Z)
 			{
-				Node* t23 = Z->left;
+				Node* papa = X->parent;
+				Node* t23 = Z->right;
 				X->left = t23;
 				if (t23 != NULL)
 					t23->parent = X;
-				Z->right = X;
+				Z->left = X;
 				X->parent = Z;
+				Z->parent = papa;
+				if (papa == NULL)
+					this->root = Z;
+				if (papa && papa->right == X)
+					papa->right = Z;
+				if (papa && papa->left == X)
+					papa->left = Z;
 				if (Z->bf == 0){
 					X->bf = 1;
 					Z->bf = -1;
