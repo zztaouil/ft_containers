@@ -2,7 +2,7 @@
 
 int		main()
 {
-	ft::tree<int,char> t1;
+	ft::tree<ft::pair<int,char>> t1;
 
 
 //	t1.insert(&t1.root, ft::make_pair('J', 'a'));
@@ -22,21 +22,24 @@ int		main()
 //	t1.insert(&t1.root, ft::make_pair('Z','o'));
 //	t1.insert(&t1.root, ft::make_pair('A','o'));
 
-//	root tjla f shi blassa!?
-	t1.insert(&t1.root, ft::make_pair(1, 'x'));
-	t1.insert(&t1.root, ft::make_pair(2, 't'));
-	t1.insert(&t1.root, ft::make_pair(3, 's'));
+//	t1.insert(&t1.root, ft::make_pair(1, 'x'));
+//	t1.insert(&t1.root, ft::make_pair(2, 't'));
+//	t1.insert(&t1.root, ft::make_pair(3, 's'));
+//
+//
+//	t1.insert(&t1.root, ft::make_pair(-1, 'b'));
+//	t1.insert(&t1.root, ft::make_pair(-2, 'v'));
+//	t1.insert(&t1.root, ft::make_pair(-3, 'c'));
+//	t1.insert(&t1.root, ft::make_pair(4, 'c'));
+//	t1.insert(&t1.root, ft::make_pair(5, 'c'));
+//	t1.insert(&t1.root, ft::make_pair(6, 'c'));
+//	t1.insert(&t1.root, ft::make_pair(7, 'c'));
 
+
+	for (int i=0; i<10000; i++)
+		t1.insert(&t1.root, ft::make_pair(i,'w'));
 	t1.tree_debug(t1.root);
-
-
-	t1.insert(&t1.root, ft::make_pair(-1, 'b'));
-	t1.insert(&t1.root, ft::make_pair(-2, 'v'));
-	t1.insert(&t1.root, ft::make_pair(-3, 'c'));
-
-
-	t1.tree_debug(t1.root);
-
+	t1.tree_free(t1.root);
 //	t1.insert(&t1.root, ft::make_pair(10, 'u'));
 //	t1.insert(&t1.root, ft::make_pair(9, 'i'));
 

@@ -8,6 +8,10 @@
 # include <iostream>
 # include <memory>
 # include <type_traits>
+# include "../iterator/bidirectional_iterator.hpp"
+# include "../iterator/reverse_iterator.hpp"
+# include "pair.hpp"
+# include "AVL.hpp"
 
 namespace ft
 {
@@ -17,7 +21,7 @@ namespace ft
 		public:
 			typedef Key			key_type;
 			typedef	T			mapped_type;
-			typedef ft::pair<const key_type,mapped_type> value_type
+			typedef ft::pair<const key_type,mapped_type> value_type;
 			typedef Compare			key_compare;
 		// value_compare	
 			typedef Alloc			allocator_type;
@@ -25,18 +29,19 @@ namespace ft
 			typedef const value_type&	const_reference;
 			typedef value_type*		pointer;
 			typedef const value_type*	const_pointer;
-		// iterators
-		// iterator bidirectional_iterator.
-		// const iterator
-		// reverse iterator
-		// const reverse iterator
+			typedef bidirectional_iterator<value_type>	iterator;
+			typedef bidirectional_iterator<const value_type> const_iterator;
+			typedef reverse_iterator<const_iterator> const_reverse_iterator;
+			typedef reverse_iterator<iterator>	reverse_iterator;
 			typedef ptrdiff_t		difference_type;
 			typedef size_t			size_type;
+
 	// PUBLIC MEMBER FUNCTIONS
 		// CONSTRUCTOR
 			// empty(1)
 			explicit map (const key_compare& comp = key_compare(),
-					const allocator_type& alloc = allocator_type());
+					const allocator_type& alloc = allocator_type()) : _allocator(alloc), _size(0){
+			}
 			// range(2)
 			template <class InputIterator>
 				map (InputIterator first, InputIterator last,
@@ -46,37 +51,76 @@ namespace ft
 				map (const map& x);
 
 		// DESTRUCTOR
-			~map(void);
+			~map(void){
+				_AVL.tree_free(_AVL.root);
+			}
 
 		// OEPRATOR=
 			map& operator=(const map& obj);
 
 		// ITERATORS
-			iterator	begin(void);
-			const_iterator 	begin(void) const;
-			iterator	end(void);
-			const_iterator	end(void) const;
-			reverse_iterator	rbegin(void);
-			const_reverese_iterator	rbegin(void) const;
-			reverse_iterator	rend(void);
-			const_reverse_iterator	rend(void) const;
+			iterator	begin(void){
+				return iterator(&(_AVL.tree_min(_AVL.root)->data), _AVL);
+			}
+			const_iterator 	begin(void) const{
+				return const_iterator(&(_AVL.tree_min(_AVL.root)->data), _AVL);
+			}
+			iterator	end(void){
+				return iterator(0x0, _AVL);
+			}
+			const_iterator	end(void) const{
+				return const_iterator(0x0, _AVL);
+			}
+			reverse_iterator	rbegin(void){
+				return reverse_iterator(end());
+			}
+			const_reverse_iterator	rbegin(void) const{
+				return const_reverse_iterator(end());
+			}
+			reverse_iterator	rend(void){
+				return reverse_iterator(begin());
+			}
+			const_reverse_iterator	rend(void) const{
+				return const_reverse_iterator(begin());
+			}
 
 		// CAPACITY
-			bool	empty(void) const;
-			size_type	size(void) const;
-			size_type	max_size(void) const;
+			bool	empty(void) const{return _size == 0;}
+			size_type	size(void) const{ return _size;}
+			size_type	max_size(void) const{ return _allocator.max_size();}
 
 		// ELEMENT ACCESS
-			mapped_type&	operator[] (const key_type& k);
+			mapped_type&	operator[] (const key_type& k){
+				node<value_type>*	nd = _AVL.tree_search(
+						_AVL.root, ft::make_pair(k, -1));
+				if (nd != 0x0)
+					return nd->data.second;
+				return 0x0;
+			}
 
 		// MODIFIERS
+		//	Node*	tree_search(Node* x, Data key){
 			// single elemet (1)
-			ft::pair<iterator, bool> insert (const value_type& val);
+			ft::pair<iterator, bool> insert (const value_type& val){
+				node<value_type>*	ret = _AVL.tree_search(_AVL.root, val);
+				if (ret != NULL)
+					return ft::make_pair<iterator, bool>
+						(iterator(&ret->data), false);
+				_AVL.insert(&_AVL.root, val);
+				_size++;
+				// if key does not exist is tree i return root
+				return ft::make_pair<iterator, bool>(iterator(&((value_type &)val)), true);
+			}
 			// with hint (2) i.e pos
 			iterator	insert (iterator position, const value_type& val);
 			// range(3)
 			template <class InputIterator>
-				void	insert (InputIterator first, InputIterator last);
+				void	insert (InputIterator first, InputIterator last){
+					while (first != last){
+						insert(*first);
+						first++;
+					}
+				}
 		// ERASE
 			// (1)
 			void	erase(iterator position);
@@ -93,7 +137,7 @@ namespace ft
 
 		// OBSERVERS
 			key_compare	key_comp(void) const;
-			value_compare	value_comp(void) const;
+//			value_compare	value_comp(void) const;
 
 		// OPERATIONS
 			iterator	find (const key_type& k);
@@ -111,8 +155,14 @@ namespace ft
 			allocator_type	get_allocator(void) const{
 				return _allocator;
 			}
+		// Debug tree
+		void	debug(void){
+			_AVL.tree_debug(_AVL.root);
+		}
 		private:
+			tree<value_type>	_AVL;
 			allocator_type	_allocator;
+			size_type	_size;
 		};
 
 }
