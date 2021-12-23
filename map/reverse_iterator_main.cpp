@@ -11,10 +11,11 @@ int	main()
 				(i, 69)
 				);
 	}
-	mymap.debug();
+//	mymap.debug();
 	std::cout << "map::size: " << mymap.size() << std::endl;
 	ft::map<int, int>::iterator it = mymap.begin();
 	ft::map<int, int>::reverse_iterator rit = mymap.rbegin();
-	std::cout << *rit << std::endl;
+	for (; rit != mymap.rend(); rit++)
+		std::cout << *rit << std::endl;
 	return 0;
 }

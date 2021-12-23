@@ -34,8 +34,9 @@ namespace ft
 				}
 				reference	operator * (void) const{
 					iterator_type tmp = _it;
+
+//					std::cout << ("operator * reverse iterator") << std::endl;
 					tmp--;
-					std::cout << ("dereference reverse it") << std::endl;
 					return	*(tmp);
 				}
 				reverse_iterator	operator + (difference_type n) const{

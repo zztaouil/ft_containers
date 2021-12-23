@@ -36,6 +36,7 @@ namespace ft
 			typedef ptrdiff_t		difference_type;
 			typedef size_t			size_type;
 
+			typedef node<value_type>	Node;
 	// PUBLIC MEMBER FUNCTIONS
 		// CONSTRUCTOR
 			// empty(1)
@@ -48,7 +49,14 @@ namespace ft
 						const key_compare& comp = key_compare(),
 						const allocator_type& alloc = allocator_type());
 			// copy (3)
-				map (const map& x);
+				map (const map& x){
+					iterator it = x.begin();
+					while (it != x.end()){
+						this->insert(*it);
+						it++;
+					}
+				}
+
 
 		// DESTRUCTOR
 			~map(void){
@@ -91,7 +99,7 @@ namespace ft
 
 		// ELEMENT ACCESS
 			mapped_type&	operator[] (const key_type& k){
-				node<value_type>*	nd = _AVL.tree_search(
+				Node*	nd = _AVL.tree_search(
 						_AVL.root, ft::make_pair(k, -1));
 				if (nd != 0x0)
 					return nd->data.second;
@@ -123,7 +131,16 @@ namespace ft
 				}
 		// ERASE
 			// (1)
-			void	erase(iterator position);
+			void	erase(iterator position){
+				// tree_delete
+				_AVL.tree_delete(
+						_AVL.root,
+						_AVL.tree_search(
+							_AVL.root,
+							*position
+							)
+						);
+			}
 			// (2)
 			size_type erase (const key_type& k);
 			// (3)

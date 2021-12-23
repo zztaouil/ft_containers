@@ -70,30 +70,33 @@ namespace ft
 		// decrement
 		bidirectional_iterator operator--(int){
 			bidirectional_iterator tmp = *this;
+//			std::cerr << "post decrement bidirectional iterator"
+//				<< std::endl;
+
+			if (_ptr == 0x0){
+				_ptr = &(_myTree.tree_max(_myTree.root)->data);
+				return tmp;
+			}
 			Node* predecessor = _myTree.tree_predecessor(
 				_myTree.tree_search(
 					_myTree.root, *_ptr)
 					);
-			if (_ptr == 0x0){
-				std::cout << "iterator -> 0x0" << std::endl;
-				_ptr = &(_myTree.tree_max(_myTree.root)->data);
-			}
-			else if (predecessor != NULL)
+			if (predecessor != NULL)
 				_ptr = &(predecessor->data);
 			else
 				_ptr = 0x0;
 			return tmp;
 		}
 		bidirectional_iterator operator--(void){
+			if (_ptr == 0x0){
+				_ptr = &(_myTree.tree_max(_myTree.root)->data);
+				return *this;
+			}
 			Node* predecessor = _myTree.tree_predecessor(
 				_myTree.tree_search(
 					_myTree.root, *_ptr)
 					);
-			if (_ptr == 0x0){
-				std::cout << "iterator -> 0x0" << std::endl;
-				_ptr = &(_myTree.tree_max(_myTree.root)->data);
-			}
-			else if (predecessor != NULL)
+			if (predecessor != NULL)
 				_ptr = &(predecessor->data);
 			else
 				_ptr = 0x0;
