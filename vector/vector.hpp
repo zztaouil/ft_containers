@@ -14,7 +14,7 @@
 # include "../iterator/reverse_iterator.hpp"
 # include "../iterator/equal.hpp"
 # include "../iterator/lexico_compare.hpp"
-
+# include "../iterator/enable_if.hpp"
 namespace ft{
 	template <class T, class Allocator = std::allocator<T> >
 		class	vector{
@@ -45,31 +45,46 @@ namespace ft{
 						return "vector_is_empty";
 					}
 			};
+			class failed_construction : public std::exception{
+				public:
+					virtual const char *what(void) const throw(){
+						return "failed_construction";
+					}
+			};
 			// vector::vector
 			explicit vector (const allocator_type& alloc = allocator_type()) :
 				_allocator(alloc), _size(DEFAULT_CAPACITY), _capacity(DEFAULT_CAPACITY){
 					_data = _allocator.allocate(DEFAULT_CAPACITY);
 					(void)alloc;
 				}
-			//_allocator(alloc)
 			explicit vector (size_type n, const value_type& val = value_type(),
 					const allocator_type& alloc = allocator_type())
-				: _allocator(alloc), _size(n), _capacity(n){
+				: _allocator(alloc), _size(0), _capacity(n){
+//					std::cerr << "vector fill constructor" << std::endl;
 					_data = _allocator.allocate(_capacity);
-					for (size_type i=0; i<_size; i++){
-						_allocator.construct(_data + i, val);
+					for (size_type i=0; i<n; i++){
+						try{
+							_allocator.construct(_data + i, val);
+						}catch(...){
+//							std::cerr << "exception catched" << std::endl;
+							vector_dest_ext();
+							throw failed_construction();
+						}
+						_size++;
 					}
 					// O(n)	
 				}
-			// C++ feature
-			//typename enable_if<!is_integral<InputIterator>::value,InputIterator >::type = InputIterator())
+
 			template <class InputIterator>
-				vector(InputIterator begin, InputIterator end, const allocator_type &alloc = allocator_type(),
-						typename std::enable_if<!std::is_integral<InputIterator>::value,
-						InputIterator >::type = InputIterator())
-				: _allocator(alloc), _size(end - begin), _capacity(_size){
+				vector(InputIterator begin, InputIterator end,
+						typename ft::enable_if<!std::is_integral<InputIterator>::value, const allocator_type&>::type = allocator_type())
+				: _allocator(allocator_type()), _size(0), _capacity(0){
+//					std::cerr << "vector range contructor" << std::endl;
+					difference_type d = std::distance(begin, end);
+					_size = static_cast<size_type>(d);
+					_capacity = static_cast<size_type>(d);
 					_data = _allocator.allocate(_capacity);
-					for (size_type i=0; i < _size; i++){
+					for(size_type i=0; i<_size; i++){
 						_allocator.construct(_data + i, *begin++);
 					}
 				}
@@ -77,15 +92,20 @@ namespace ft{
 				*this = x;
 			}
 			// ;
-
-			// vector::~vector
-			~vector(void){
+			void	vector_dest_ext(void){
 				if (_size != 0){
 					for (size_type i = 0; i < _size; i++)
 						_allocator.destroy(_data + i);
+					_size = 0;
 				}
-				if (_capacity != 0)
+			}
+			// vector::~vector
+			~vector(void){
+				vector_dest_ext();
+				if (_capacity != 0){
 					_allocator.deallocate(_data, _capacity);
+					_capacity = 0;
+				}
 			}
 			// ;
 			vector &operator=(vector const &rhs){
@@ -144,18 +164,22 @@ namespace ft{
 			}
 			// This function has no effect on the vector size and cannot alter its elements.
 			void	reserve(size_type n){
-				// This function causes the container to reallocate its storage increasing its capacity to n (or greater)
+				// This function causes the container to reallocate its storage increasing its capacity to n (or greater)?
+				if (n > max_size()){
+					throw std::length_error("length_error");
+				}
 				if (!n){
 					_data = _allocator.allocate(1);
 					_capacity = 1;
 				}
-				if (n > _capacity){
+				else if (n > _capacity){
 					pointer	tmp = _allocator.allocate(n);
 					for (size_type i = 0;i < _size; i++){
 						_allocator.construct(tmp + i, _data[i]);
 						_allocator.destroy(_data + i);
 					}
-					_allocator.deallocate(_data, _capacity);
+					if (!_capacity)	
+						_allocator.deallocate(_data, _capacity);
 					_capacity = n;
 					_data = tmp;
 				}
@@ -250,16 +274,14 @@ namespace ft{
 			}
 			template <class InputIterator>
 				void	assign(InputIterator first,InputIterator last){
-					size_type len = last - first;
-					_size = 0;
-					if (len > _capacity){
-						reserve(len);
-					}
-					for (size_type i = 0; i < _size; i++)
-						_allocator.destroy(_data + i);
-					for (size_type i = 0; i < len; i++)
-						_allocator.construct(_data + i, first[i]);
-					_size = len;
+					difference_type d = std::distance(first, last);
+					for (size_type i = 0; i <_size; i++)
+						_allocator.destroy(_data +i);
+					if (static_cast<size_type>(d) > _capacity)
+						reserve(d);
+					for (size_type i = 0; i < static_cast<size_type>(d); i++)
+						_allocator.construct(_data + i, *first++);
+					_size = static_cast<size_type>(d);
 				}
 			// ;
 			void	push_back(value_type const &val){
@@ -275,22 +297,29 @@ namespace ft{
 				_allocator.destroy(_data + _size - 1);
 				_size -= 1;
 			}
-			// buffer overflow
-			// owned
 			iterator 	insert (iterator position, value_type const &val){
 				difference_type d = std::distance(begin(), position);
 				if (_size + 1 > _capacity){
 					reserve(_capacity * 2);
 				}
-				if (static_cast<size_type>(d) == _size)
-					_data[_size++] = val;
+				if (static_cast<size_type>(d) == _size){
+					try{
+						_allocator.construct(_data + _size, val);
+						_size++;
+					}catch(...){
+
+					}
+				}
 				else if (static_cast<size_type>(d) < _size){
 					for (size_type i = _size; i > static_cast<size_type>(d); i--){
 						_allocator.construct(_data + i, _data[i - 1]);
 						_allocator.destroy(_data + i - 1);
 					}
-					_allocator.construct(_data + d, val);
-					_size++;
+					try{
+						_allocator.construct(_data + d, val);
+						_size++;
+					}catch(...){}
+
 				}
 				return iterator(_data + d);
 				// O(n)
@@ -305,8 +334,10 @@ namespace ft{
 						reserve(_capacity * 2);
 				}
 				if (static_cast<size_type>(d) == _size){
-					for (size_type i = _size; i < (_size + n); i++)
+					for (size_type i = _size; i < (_size + n); i++){
+
 						_allocator.construct(_data + i, val);
+					}
 					_size += n;
 				}
 				else if (static_cast<size_type>(d) < _size){
@@ -323,7 +354,7 @@ namespace ft{
 			}
 			template <class InputIterator>
 				void		insert (iterator position, InputIterator first, InputIterator last,
-						typename std::enable_if<!std::is_integral<InputIterator>::value,
+						typename ft::enable_if<!std::is_integral<InputIterator>::value,
 						InputIterator>::type = InputIterator()){
 					difference_type d = std::distance(begin(), position);
 					difference_type l = std::distance(first, last);

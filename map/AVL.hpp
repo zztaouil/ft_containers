@@ -15,12 +15,12 @@ namespace ft
 			// balance factor
 			int	bf;
 		};
-	template <class U, class Alloc =
-		std::allocator<node<U> > >
+	template <class U, class Alloc = std::allocator<node<U> > >
 		struct tree{
 			typedef node<U>	Node;
 			typedef U	Data;
 			typedef Alloc	allocator_type;
+//			typedef Compare key_compare;
 //			typedef typename Alloc::template rebind<Node>::other
 //				allocator_type;
 

@@ -2,7 +2,7 @@
 
 int		main()
 {
-	ft::tree<ft::pair<int,char>> t1;
+	ft::tree<ft::pair<int,char> > t1;
 
 
 //	t1.insert(&t1.root, ft::make_pair('J', 'a'));

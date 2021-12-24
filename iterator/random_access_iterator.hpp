@@ -36,7 +36,8 @@ namespace ft{
 				//Can be dereferenced as an rvalue i.e (*a; a->m;)
 				//For mutable iterators (non-constant) i.e (*a = t)
 				pointer operator -> (void){ return _ptr; }
-				reference operator * (void){ return *_ptr; }
+				reference operator * (void){//std::cout << "random access iterator * operator val-> " << *_ptr << std::endl; 
+					return *_ptr; }
 
 				//Can be incremented i.e (++a, a++, *a++)
 				Iterator operator ++ (int){
