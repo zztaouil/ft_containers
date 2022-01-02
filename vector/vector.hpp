@@ -1,5 +1,5 @@
-#ifndef VECTOR_HPP
-# define VECTOR_HPP
+#ifndef vector_HPP
+# define vector_HPP
 
 # define DEFAULT_CAPACITY 0
 
@@ -39,7 +39,7 @@ namespace ft{
 						return "out_of_range";
 					}
 			};
-			class emptyVector : public std::exception{
+			class emptyvector : public std::exception{
 				public:
 					virtual const char *what(void) const throw(){
 						return "vector_is_empty";
@@ -166,6 +166,7 @@ namespace ft{
 			void	reserve(size_type n){
 				// This function causes the container to reallocate its storage increasing its capacity to n (or greater)?
 				if (n > max_size()){
+					// std::cerr << n << " " << max_size() << std::endl;
 					throw std::length_error("length_error");
 				}
 				if (!n){
@@ -240,22 +241,22 @@ namespace ft{
 			}
 			const_reference	front(void) const{				
 				if (empty())
-					throw emptyVector();
+					throw emptyvector();
 				return _data[0];
 			}
 			reference	front(void){		
 				if (empty())
-					throw emptyVector();
+					throw emptyvector();
 				return _data[0];
 			}
 			const_reference	back(void) const{
 				if (empty())
-					throw emptyVector();
+					throw emptyvector();
 				return _data[_size - 1];
 			}
 			reference	back(void){
 				if (empty())
-					throw emptyVector();		
+					throw emptyvector();		
 				return _data[_size - 1];
 			}
 
@@ -341,23 +342,35 @@ namespace ft{
 					_size += n;
 				}
 				else if (static_cast<size_type>(d) < _size){
+					// std::cout << "hna?" << std::endl;
 					for (size_type i = _size + n - 1; i >= (static_cast<size_type>(d) + n); i--){
-						//std::cout << _data[i] << std::endl;
+						// std::cout << _data[i-n] << std::endl;
 						_allocator.construct(_data + i, _data[i - n]);
 					}
 					for (size_type i = static_cast<size_type>(d); i < (static_cast<size_type>(d) + n); i++){
-						_allocator.destroy(_data + i);
+						// std::cout << i << std::endl;
+						if (i < _size){
+							// std::cout << "$" << _data[i] << std::endl;
+							_allocator.destroy(_data + i);
+						}
 						_allocator.construct(_data + i, val);
 					}
+					// std::cout << "hna!" << std::endl;
+
 					_size += n;
 				}
+				return ;
 			}
 			template <class InputIterator>
 				void		insert (iterator position, InputIterator first, InputIterator last,
 						typename ft::enable_if<!std::is_integral<InputIterator>::value,
 						InputIterator>::type = InputIterator()){
+					// std::cout << "range insert" << std::endl;
 					difference_type d = std::distance(begin(), position);
 					difference_type l = std::distance(first, last);
+					// std::cout << "l: " << l << std::endl;
+					// std::cout << "d: " << d << std::endl;
+
 					if (l + _size > _capacity)
 					{
 						if (l + _size > _capacity * 2)
@@ -365,6 +378,7 @@ namespace ft{
 						else
 							reserve(_capacity * 2);
 					}
+					// this->debug();
 					if (static_cast<size_type>(d) == _size){
 						for (size_type i = _size; i < _size + l; i++){
 							_allocator.construct(_data + i, *first++);
@@ -372,15 +386,22 @@ namespace ft{
 						_size += l;
 					}
 					else if (static_cast<size_type>(d) < _size){
+						// std::cout << "inside case" << std::endl;
 						for (size_type i = _size + l; i >= (static_cast<size_type>(d) + l); i--){
-							_allocator.construct(_data + i, _data[i - l]);
+							// std::cout << "seg hna?" <<	i << std::endl;
+							_allocator.construct(_data + i - 1, _data[i - l - 1]);
+							_allocator.destroy(_data + i - l - 1);
 						}
 						for (size_type i = static_cast<size_type>(d); i < (static_cast<size_type>(d) + l); i++){
-							_allocator.destroy(_data + i);
+							// if (i < _size){
+								// _allocator.destroy(_data + i);
+								// std::cout << _data[i] << std::endl;
+							// }
 							_allocator.construct(_data + i, *first++);
 						}
 						_size += l;
 					}
+					return ;
 				}
 			// this is fine
 			iterator 	erase(iterator position){
