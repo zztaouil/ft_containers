@@ -365,11 +365,8 @@ namespace ft{
 				void		insert (iterator position, InputIterator first, InputIterator last,
 						typename ft::enable_if<!std::is_integral<InputIterator>::value,
 						InputIterator>::type = InputIterator()){
-					// std::cout << "range insert" << std::endl;
 					difference_type d = std::distance(begin(), position);
 					difference_type l = std::distance(first, last);
-					// std::cout << "l: " << l << std::endl;
-					// std::cout << "d: " << d << std::endl;
 
 					if (l + _size > _capacity)
 					{
@@ -378,7 +375,6 @@ namespace ft{
 						else
 							reserve(_capacity * 2);
 					}
-					// this->debug();
 					if (static_cast<size_type>(d) == _size){
 						for (size_type i = _size; i < _size + l; i++){
 							_allocator.construct(_data + i, *first++);
@@ -386,17 +382,11 @@ namespace ft{
 						_size += l;
 					}
 					else if (static_cast<size_type>(d) < _size){
-						// std::cout << "inside case" << std::endl;
 						for (size_type i = _size + l; i >= (static_cast<size_type>(d) + l); i--){
-							// std::cout << "seg hna?" <<	i << std::endl;
 							_allocator.construct(_data + i - 1, _data[i - l - 1]);
 							_allocator.destroy(_data + i - l - 1);
 						}
 						for (size_type i = static_cast<size_type>(d); i < (static_cast<size_type>(d) + l); i++){
-							// if (i < _size){
-								// _allocator.destroy(_data + i);
-								// std::cout << _data[i] << std::endl;
-							// }
 							_allocator.construct(_data + i, *first++);
 						}
 						_size += l;
