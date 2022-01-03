@@ -18,7 +18,7 @@ namespace ft
 			typedef tree<value_type, Compare>	Tree;
 			typedef typename Tree::Node	Node;
 		// default constructor
-		bidirectional_iterator(void) : _ptr(0), _myTree(0){};
+		bidirectional_iterator(void) : _ptr(0), _myTree(){};
 		// copy constructor
 		bidirectional_iterator(bidirectional_iterator const &obj){
 			*this = obj;

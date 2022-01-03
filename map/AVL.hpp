@@ -21,11 +21,10 @@ namespace ft
 			typedef U	Data;
 			typedef Alloc	allocator_type1;
 			typedef Compare key_compare;
-			typedef typename allocator_type1::1template rebind<Node>::other allocator_type2;
+			typedef typename allocator_type1::template rebind<Node>::other allocator_type2;
 
 			tree(const allocator_type1& alloc = allocator_type1())
-				:root(0), allocator(alloc){
-//					std::cout << "tree constructor" << std::endl;
+				:root(0), allocator1(alloc), comp(){
 				}
 			~tree(void){
 //				std::cout << "tree destructor" << std::endl;
@@ -39,11 +38,11 @@ namespace ft
 //			}
 			// construct new node
 			Node*	node_new(Data Data, Node* Parent){
-				Node* node = allocator.allocate(1);
+				Node* node = allocator2.allocate(1);
 				node->left = NULL;
 				node->right = NULL;
 				node->parent = Parent;
-				allocator.construct(&node->data, Data);
+				allocator1.construct(&node->data, Data);
 				node->bf = 0;
 				return node;
 			}
@@ -51,7 +50,7 @@ namespace ft
 			Node*	tree_search(Node* x, Data key){
 				if (x == NULL || key.first == x->data.first)
 					return x;
-				if (key.first < x->data.first)
+				if (comp(key.first, x->data.first))
 					return tree_search(x->left , key);
 				else
 					return tree_search(x->right, key);
@@ -62,7 +61,7 @@ namespace ft
 				Node*	x = *Root;
 				while (x != NULL){
 					y = x;
-					if (data.first < x->data.first)
+					if (comp(data.first, x->data.first))
 						x = x->left;
 					else
 						x = x->right;
@@ -70,7 +69,7 @@ namespace ft
 				Node* z = node_new(data, y);
 				if (y == NULL)
 					*Root = z;
-				else if (z->data.first < y->data.first)
+				else if (comp(z->data.first, y->data.first))
 					y->left = z;
 				else
 					y->right = z;
@@ -114,7 +113,8 @@ namespace ft
 					y->left = z->left;
 					y->left->parent = y;
 				}
-				allocator.deallocate(z, 1);
+				allocator1.destroy(&z->data);
+				allocator2.deallocate(z, 1);
 			}
 			void	subtree_shift(Node** T, Node* u, Node* v){
 				if (u->parent == NULL)
@@ -132,7 +132,8 @@ namespace ft
 					return ;
 				tree_free(Root->left);
 				tree_free(Root->right);
-				allocator.deallocate(Root, 1);
+				allocator1.destroy(&Root->data);
+				allocator2.deallocate(Root, 1);
 			}
 			// inorder traversal
 			void	tree_inorder(Node* Root){
@@ -149,7 +150,7 @@ namespace ft
 				return x;
 			}
 			// tree minimum
-			Node	*tree_min(Node* x){
+			Node	*tree_min(Node* x) const{
 				while (x->left != NULL)
 					x = x->left;
 				return x;
@@ -205,13 +206,11 @@ namespace ft
 //				std::cerr << Root << " " << Root->data << " " << Root->bf << std::endl;
 				if (Root->bf >= 2 && Root->right->bf >= 0){
 //					std::cerr << "left rot " << Root->data << " " << Root->right->data << " " << Root->bf << std::endl;
-//					return ;
 					rotate_left(Root, Root->right);
 					return ;
 				}
 				if (Root->bf <= -2 && Root->left->bf <= 0){
 //					std::cerr << "right rot " << Root->data << " " << Root->left->data << std::endl;
-//					return ;
 					rotate_right(Root, Root->left);
 					return ;
 				}
@@ -250,13 +249,6 @@ namespace ft
 					tree_height(Z->left);
 				X->bf = tree_height(X->right) -
 					tree_height(X->left);
-//				if (Z->bf == 0){
-//					X->bf = 1;
-//					Z->bf = -1;
-//				}else{
-//					X->bf = 0;
-//					Z->bf = 0;
-//				}
 				return Z;
 				// parent of X right node should be pointing to Z;
 				// X should be replaced by Z in root node.
@@ -284,13 +276,6 @@ namespace ft
 					tree_height(Z->left);
 				X->bf = tree_height(X->right) -
 					tree_height(X->left);
-//				if (Z->bf == 0){
-//					X->bf = 1;
-//					Z->bf = -1;
-//				}else{
-//					X->bf = 0;
-//					Z->bf = 0;
-//				}
 				return Z;
 			}
 			/*======================================================*/
@@ -318,7 +303,10 @@ namespace ft
 			// root node
 			Node*	root;
 			// allocator
-			allocator_type2	allocator;
+			allocator_type1 allocator1;
+			allocator_type2	allocator2;
+			// key_compare
+			key_compare	comp;
 		};
 }
 

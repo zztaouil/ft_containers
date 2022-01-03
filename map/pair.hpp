@@ -24,9 +24,9 @@ namespace ft
 				return *this;
 			}
 			// conversion overload
-//			operator pair<const T1, T2>() const{
-//				return pair<const T1, T2>(first, second);
-//			}
+			operator pair<const T1, T2>() const{
+				return pair<const T1, T2>(first, second);
+			}
 			first_type	first;
 			second_type	second;
 		};
