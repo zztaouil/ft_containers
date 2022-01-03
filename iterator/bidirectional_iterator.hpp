@@ -6,7 +6,7 @@
 // need access to my Tree inside this class.
 namespace ft
 {
-	template <class T>
+	template <class T, class Compare>
 		class bidirectional_iterator : public std::iterator<std::bidirectional_iterator_tag, T>{
 		public:
 			// member types
@@ -15,7 +15,7 @@ namespace ft
 			typedef ptrdiff_t	difference_type;
 			typedef T*		pointer;
 			typedef T&		reference;
-			typedef tree<value_type>	Tree;
+			typedef tree<value_type, Compare>	Tree;
 			typedef typename Tree::Node	Node;
 		// default constructor
 		bidirectional_iterator(void) : _ptr(0), _myTree(0){};
@@ -103,8 +103,8 @@ namespace ft
 			return *this;
 		}
 		// Conversion operator
-		operator bidirectional_iterator<const T>() const{
-			return bidirectional_iterator<const T>(_ptr);
+		operator bidirectional_iterator<const T, Compare>() const{
+			return bidirectional_iterator<const T, Compare>(_ptr);
 		}
 		pointer get_ptr(void){ return _ptr;}
 		void	set_Tree(Tree const &tr){
@@ -116,14 +116,14 @@ namespace ft
 		};
 	// Non member overloads
 	// comparison
-	template <class T1, class T2>
-		bool	operator==(bidirectional_iterator<T1> lhs,
-				bidirectional_iterator<T2> rhs){
+	template <class T1, class T2, class Compare>
+		bool	operator==(bidirectional_iterator<T1, Compare> lhs,
+				bidirectional_iterator<T2, Compare> rhs){
 			return lhs.get_ptr() == rhs.get_ptr();
 		}
-	template <class T1, class T2>
-		bool	operator!=(bidirectional_iterator<T1> lhs,
-				bidirectional_iterator<T2> rhs){
+	template <class T1, class T2, class Compare>
+		bool	operator!=(bidirectional_iterator<T1, Compare> lhs,
+				bidirectional_iterator<T2, Compare> rhs){
 			return lhs.get_ptr() != rhs.get_ptr();
 		}
 

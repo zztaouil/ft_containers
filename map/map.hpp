@@ -23,14 +23,14 @@ namespace ft
 			typedef	T			mapped_type;
 			typedef ft::pair<const key_type,mapped_type> value_type;
 			typedef Compare			key_compare;
-		// value_compare	
+		// value_compare
 			typedef Alloc			allocator_type;
 			typedef	value_type&		reference;
 			typedef const value_type&	const_reference;
 			typedef value_type*		pointer;
 			typedef const value_type*	const_pointer;
-			typedef bidirectional_iterator<value_type>	iterator;
-			typedef bidirectional_iterator<const value_type> const_iterator;
+			typedef bidirectional_iterator<value_type, key_compare>	iterator;
+			typedef bidirectional_iterator<const value_type, key_compare> const_iterator;
 			typedef reverse_iterator<const_iterator> const_reverse_iterator;
 			typedef reverse_iterator<iterator>	reverse_iterator;
 			typedef ptrdiff_t		difference_type;
@@ -177,7 +177,7 @@ namespace ft
 			_AVL.tree_debug(_AVL.root);
 		}
 		private:
-			tree<value_type>	_AVL;
+			tree<value_type, key_compare>	_AVL;
 			allocator_type	_allocator;
 			size_type	_size;
 		};
