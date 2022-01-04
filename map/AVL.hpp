@@ -47,7 +47,7 @@ namespace ft
 				return node;
 			}
 			// search
-			Node*	tree_search(Node* x, Data key){
+			Node*	tree_search(Node* x, Data key) const{
 				if (x == NULL || key.first == x->data.first)
 					return x;
 				if (comp(key.first, x->data.first))

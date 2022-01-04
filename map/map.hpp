@@ -111,16 +111,11 @@ namespace ft
 			size_type	max_size(void) const{ return _allocator.max_size();}
 
 		// ELEMENT ACCESS
-			mapped_type&	operator[] (const key_type& k){
-				Node*	nd = _AVL.tree_search(
-						_AVL.root, ft::make_pair(k, mapped_type()));
-				if (nd != 0x0)
-					return nd->data.second;
-				return mapped_type();
+			mapped_type&	operator[] (const key_type& val){
+				 return (*((this->insert(make_pair(val,mapped_type()))).first)).second ;
 			}
 
 		// MODIFIERS
-		//	Node*	tree_search(Node* x, Data key){
 			// single elemet (1)
 			ft::pair<iterator, bool> insert (const value_type& val){
 				node<value_type>*	ret = _AVL.tree_search(_AVL.root, val);
@@ -129,6 +124,7 @@ namespace ft
 						(iterator(&ret->data), false);
 				_AVL.insert(&_AVL.root, val);
 				_size++;
+				// std::cout << 
 				// if key does not exist is tree i return root
 				return ft::make_pair<iterator, bool>(iterator(&((value_type &)val)), true);
 			}
@@ -192,11 +188,36 @@ namespace ft
 //			value_compare	value_comp(void) const;
 
 		// OPERATIONS
-			iterator	find (const key_type& k);
-			const_iterator	find (const key_type& k) const;
-			size_type	count (const key_type& k) const;
-			iterator	lower_bound(const key_type& k);
-			const_iterator	lower_bound(const key_type& k) const;
+			iterator	find (const key_type& k){
+				return iterator(&(_AVL.tree_search(_AVL.root, ft::make_pair(k,k))->data), _AVL);
+			}
+			const_iterator	find (const key_type& k) const{
+				return const_iterator(&(_AVL.tree_search(_AVL.root, ft::make_pair(k,k))->data), _AVL);
+			}
+			size_type	count (const key_type& k) const{
+				iterator it = iterator(&(_AVL.tree_search(_AVL.root, ft::make_pair(k,k))->data), _AVL);
+				if (it.get_ptr() != 0x0)
+					return 1;
+				return 0;
+			}
+			iterator	lower_bound(const key_type& k){
+				for (iterator it = begin(); it != end(); it++)
+				{
+					if (key_comp()(it->first, k) == false){
+						return it;
+					}
+				}
+				return end();
+			}
+			const_iterator	lower_bound(const key_type& k) const{
+				for (iterator it = begin(); it != end(); it++)
+				{
+					if (key_comp()(it->first, k) == false){
+						return const_iterator(it);
+					}
+				}
+				return end();		
+			}
 			iterator	upper_bound(const key_type& k);
 			const_iterator	upper_bound(const key_type& k) const;
 			ft::pair<const_iterator,const_iterator>	equal_range(const key_type& k)
@@ -220,7 +241,7 @@ namespace ft
 	template < class Key, class T>
 		bool	operator == (const map<Key, T>& lhs, const map<Key, T>& rhs){
 			if (lhs.size() == rhs.size())
-			 	return ft::equal(lhs.begin(), lhs,end(), rhs.begin());
+			 	return ft::equal(lhs.begin(), lhs.end(), rhs.begin());
 			return false;
 		}
 
