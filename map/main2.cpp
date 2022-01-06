@@ -6,7 +6,7 @@ int main ()
   ft::map<char,int>::iterator itlow,itup;
 
     mymap['a']=69;
-//  mymap['a']=69;
+    // mymap['a']=69;
 // mymap.insert(ft::make_pair('a', 66));
 //  mymap['a']=69;
     mymap.debug();

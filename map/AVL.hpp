@@ -56,7 +56,7 @@ namespace ft
 					return tree_search(x->right, key);
 			}
 			// insertion
-			void	insert_ext(Node** Root, Data data){
+			Node*	insert_ext(Node** Root, Data data){
 				Node*	y = NULL;
 				Node*	x = *Root;
 				while (x != NULL){
@@ -73,11 +73,13 @@ namespace ft
 					y->left = z;
 				else
 					y->right = z;
+				return z;
 			}
-			void	insert(Node** Root, Data data){
-				insert_ext(Root,data);
+			Node*	insert(Node** Root, Data data){
+				Node*	bobo = insert_ext(Root,data);
 				update_bf(*Root);
 				rebalance(*Root);
+				return bobo;
 //				std::cerr << "#" << std::endl;
 			}
 			void	update_bf(Node* Root){

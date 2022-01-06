@@ -122,11 +122,11 @@ namespace ft
 				if (ret != NULL)
 					return ft::make_pair<iterator, bool>
 						(iterator(&ret->data), false);
-				_AVL.insert(&_AVL.root, val);
+				Node* toto = _AVL.insert(&_AVL.root, val);
 				_size++;
 				// std::cout << 
 				// if key does not exist is tree i return root
-				return ft::make_pair<iterator, bool>(iterator(&((value_type &)val)), true);
+				return ft::make_pair<iterator, bool>(iterator(&toto->data), true);
 			}
 			// with hint (2) i.e pos
 			iterator	insert (iterator position, const value_type& val);
