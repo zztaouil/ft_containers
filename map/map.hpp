@@ -218,11 +218,31 @@ namespace ft
 				}
 				return end();		
 			}
-			iterator	upper_bound(const key_type& k);
-			const_iterator	upper_bound(const key_type& k) const;
+			iterator	upper_bound(const key_type& k){
+				for (iterator it = begin(); it != end(); it++)
+				{
+					if (key_comp()(it->first, k) == true){
+						return iterator(it);
+					}
+				}
+				return end();
+			}
+			const_iterator	upper_bound(const key_type& k) const{
+				for (iterator it = begin(); it != end(); it++)
+				{
+					if (key_comp()(it->first, k) == true){
+						return const_iterator(it);
+					}
+				}
+				return end();
+			}
 			ft::pair<const_iterator,const_iterator>	equal_range(const key_type& k)
-				const;
-			ft::pair<iterator,iterator>	equal_range(const key_type& k);
+				const{
+					return make_pair(lower_bound(k), upper_bound(k));
+				}
+			ft::pair<iterator,iterator>	equal_range(const key_type& k){
+				return ft::make_pair<iterator, iterator>(lower_bound(k), upper_bound(k));
+			}
 
 		// ALLOCATOR
 			allocator_type	get_allocator(void) const{
