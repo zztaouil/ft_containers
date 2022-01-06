@@ -221,7 +221,7 @@ namespace ft
 			iterator	upper_bound(const key_type& k){
 				for (iterator it = begin(); it != end(); it++)
 				{
-					if (key_comp()(it->first, k) == true){
+					if (key_comp()(k, it->first) == true){
 						return iterator(it);
 					}
 				}
@@ -230,7 +230,7 @@ namespace ft
 			const_iterator	upper_bound(const key_type& k) const{
 				for (iterator it = begin(); it != end(); it++)
 				{
-					if (key_comp()(it->first, k) == true){
+					if (key_comp()(k, it->first) == true){
 						return const_iterator(it);
 					}
 				}
