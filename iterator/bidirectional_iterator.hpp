@@ -104,7 +104,7 @@ namespace ft
 		}
 		// Conversion operator
 		operator bidirectional_iterator<const T, Compare>() const{
-			return bidirectional_iterator<const T, Compare>(_ptr);
+			return bidirectional_iterator<const T, Compare>(_ptr, _myTree);
 		}
 		pointer get_ptr(void){ return _ptr;}
 		void	set_Tree(Tree const &tr){

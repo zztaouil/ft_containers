@@ -39,18 +39,12 @@ namespace ft
  				void	pop(void){
 					_u_container.pop_back();
  				}
-				template<class S, class C>
-					friend bool operator== (const stack<S, C>& lhs, const stack<S,C>& rhs){ return lhs._u_container == rhs._u_container; }
-				template<class S, class C>
-					friend bool operator!= (const stack<S, C>& lhs, const stack<S,C>& rhs){ return lhs._u_container != rhs._u_container; }
-				template<class S, class C>
-					friend bool operator< (const stack<S, C>& lhs, const stack<S,C>& rhs){ return lhs._u_container < rhs._u_container; }
-				template<class S, class C>
-					friend bool operator<= (const stack<S, C>& lhs, const stack<S,C>& rhs){ return lhs._u_container <= rhs._u_container; }
-				template<class S, class C>
-					friend bool operator> (const stack<S, C>& lhs, const stack<S,C>& rhs){ return lhs._u_container > rhs._u_container; }
-				template<class S, class C>
-					friend bool operator>= (const stack<S, C>& lhs, const stack<S,C>& rhs){ return lhs._u_container >= rhs._u_container; }
+				friend bool operator== (const stack& lhs, const stack& rhs){ return lhs._u_container == rhs._u_container; }
+				friend bool operator!= (const stack& lhs, const stack& rhs){ return lhs._u_container != rhs._u_container; }
+				friend bool operator< (const stack& lhs, const stack& rhs){ return lhs._u_container < rhs._u_container; }
+				friend bool operator<= (const stack& lhs, const stack& rhs){ return lhs._u_container <= rhs._u_container; }
+				friend bool operator> (const stack& lhs, const stack& rhs){ return lhs._u_container > rhs._u_container; }
+				friend bool operator>= (const stack& lhs, const stack& rhs){ return lhs._u_container >= rhs._u_container; }
 
 			private:
 				container_type		_u_container;

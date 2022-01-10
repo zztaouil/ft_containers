@@ -2,6 +2,7 @@
 # define AVL_HPP
 
 # include "pair.hpp"
+# include <memory>
 # include <iostream>
 
 namespace ft
@@ -21,10 +22,15 @@ namespace ft
 			typedef U	Data;
 			typedef Alloc	allocator_type1;
 			typedef Compare key_compare;
-			typedef typename allocator_type1::template rebind<Node>::other allocator_type2;
+			// not working on my computer
+//			typedef typename allocator_type1::template rebind<Node>::other allocator_type2;
+			// hotfix
+			typedef std::allocator<Node> allocator_type2;
+
 
 			tree(const allocator_type1& alloc = allocator_type1())
 				:root(0), allocator1(alloc), comp(){
+//					std::cout << "Tree constructor" << std::endl;
 				}
 			~tree(void){
 //				std::cout << "tree destructor" << std::endl;
