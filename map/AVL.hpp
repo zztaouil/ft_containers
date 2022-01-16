@@ -15,9 +15,21 @@ namespace ft
 			node* parent;
 			// balance factor
 			int	bf;
+			node (const node & obj){
+				data = obj.data;
+				left = obj.left;
+				right = obj.right;
+				parent = obj.parent;
+				bf = obj.bf;
+				return *this;
+			}
+			operator node<const T>() const{
+				return node<const T>();
+			}
 		};
-	template <class U, class Compare, class Alloc = std::allocator<U > >
-		struct tree{
+	template <class U, class Compare, class Alloc = std::allocator<U> >
+		class tree{
+		public:
 			typedef node<U>	Node;
 			typedef U	Data;
 			typedef Alloc	allocator_type1;
@@ -29,7 +41,7 @@ namespace ft
 
 
 			tree(const allocator_type1& alloc = allocator_type1())
-				:root(0), allocator1(alloc), comp(){
+				:allocator1(alloc), allocator2(allocator_type2()), root(0), comp(){
 //					std::cout << "Tree constructor" << std::endl;
 				}
 			~tree(void){
@@ -142,6 +154,7 @@ namespace ft
 				tree_free(Root->right);
 				allocator1.destroy(&Root->data);
 				allocator2.deallocate(Root, 1);
+				Root = 0x0;
 			}
 			// inorder traversal
 			void	tree_inorder(Node* Root){
@@ -159,6 +172,8 @@ namespace ft
 			}
 			// tree minimum
 			Node	*tree_min(Node* x) const{
+				if (x == NULL)
+					return x;
 				while (x->left != NULL)
 					x = x->left;
 				return x;
@@ -294,7 +309,7 @@ namespace ft
 				{
 					std::cout << prefix;
 					std::cout << (isLeft?"├──" : "└──");
-					std::cout << "|" << node->data << ":" << node->bf << std::endl;
+					std::cout << "|" << node->data << ":" << node << std::endl;
 
 					tree_debug(prefix+(isLeft?"│   "
 								: "    "),
@@ -308,9 +323,10 @@ namespace ft
 				std::cout << std::endl;
 				tree_debug("$", root, false);
 			}
+
 			// root node
 			Node*	root;
-			// allocator
+			// allocators
 			allocator_type1 allocator1;
 			allocator_type2	allocator2;
 			// key_compare

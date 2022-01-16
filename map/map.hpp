@@ -6,7 +6,6 @@
 # include <iomanip>
 # include <cstddef>
 # include <iostream>
-# include <memory>
 # include <type_traits>
 # include <algorithm>
 # include "../iterator/bidirectional_iterator.hpp"
@@ -22,11 +21,12 @@ namespace ft
 		 class Alloc = std::allocator<ft::pair<const Key, T> > >
 		class map{
 		public:
+
+
 			typedef Key			key_type;
 			typedef T			mapped_type;
 			typedef ft::pair<const key_type,mapped_type> value_type;
 			typedef Compare			key_compare;
-		// value_compare
 			typedef Alloc			allocator_type;
 			typedef value_type&		reference;
 			typedef const value_type&	const_reference;
@@ -35,11 +35,25 @@ namespace ft
 			typedef bidirectional_iterator<value_type, key_compare> iterator;
 			typedef bidirectional_iterator<const value_type, key_compare> const_iterator;
 			typedef reverse_iterator<const_iterator> const_reverse_iterator;
-			typedef reverse_iterator<iterator>	reverse_iterator;
+			typedef reverse_iterator<iterator>		reverse_iterator;
 			typedef ptrdiff_t		difference_type;
 			typedef size_t			size_type;
 
 			typedef node<value_type>	Node;
+			class value_compare : public std::binary_function<value_type, value_type, bool>{
+				friend class map;
+				protected:
+				Compare comp;
+				value_compare (Compare c) : comp(c) {}
+				public:
+				typedef bool result_type;
+				typedef value_type first_argument_type;
+				typedef value_type second_argument_type;
+				bool operator() (const value_type& x, const value_type& y) const
+				{
+					return comp(x.first, y.first);
+				}
+			};
 	// PUBLIC MEMBER FUNCTIONS
 		// CONSTRUCTOR
 			// empty(1)
@@ -70,28 +84,31 @@ namespace ft
 			}
 
 		// OEPRATOR=
-			map& operator=(const map& obj){
-				if (this != &obj){
-					iterator it = obj.begin();
-					while (it != obj.end()){
-						this->insert(*it++);
-					}
-				}
+			map& operator=(map const &obj){
+				// std::cout << "operator=" << std::endl;
+				this->clear();
+				this->insert(obj.begin(),obj.end());
+				this->_allocator = obj._allocator;
 				return *this;
 			}
 
 		// ITERATORS
-			iterator	begin(void) {
-				return iterator(&(_AVL.tree_min(_AVL.root)->data), _AVL);
+			iterator	begin(void) noexcept{
+				// std::cout << "Non const begin" << std::endl;
+				Node* ret = _AVL.tree_min(_AVL.root);
+				if (ret != NULL)
+					return iterator(&(_AVL.tree_min(_AVL.root)->data), _AVL.root);
+				return iterator(0x0, _AVL.root);
 			}
-			const_iterator	begin(void) const{
-				return const_iterator(&(_AVL.tree_min(_AVL.root)->data), _AVL);
+			const_iterator	begin(void) const noexcept{
+				// std::cout << "const begin" << std::endl;
+				return const_iterator(&(_AVL.tree_min(_AVL.root)->data), reinterpret_cast<node<const value_type>*>(_AVL.root));
 			}
 			iterator	end(void) {
-				return iterator(0x0, _AVL);
+				return iterator(0x0, _AVL.root);
 			}
 			const_iterator	end(void) const{
-				return const_iterator(0x0, _AVL);
+				return const_iterator(0x0, reinterpret_cast<node<const value_type>*>(_AVL.root));
 			}
 			reverse_iterator	rbegin(void){
 				return reverse_iterator(end());
@@ -113,7 +130,7 @@ namespace ft
 
 		// ELEMENT ACCESS
 			mapped_type&	operator[] (const key_type& val){
-				 return (*((this->insert(make_pair(val,mapped_type()))).first)).second ;
+				 return (*((this->insert(ft::make_pair(val,mapped_type()))).first)).second ;
 			}
 
 		// MODIFIERS
@@ -122,18 +139,22 @@ namespace ft
 				node<value_type>*	ret = _AVL.tree_search(_AVL.root, val);
 				if (ret != NULL)
 					return ft::make_pair<iterator, bool>
-						(iterator(&ret->data), false);
+						(iterator(&ret->data, _AVL.root), false);
 				Node* toto = _AVL.insert(&_AVL.root, val);
 				_size++;
 				// std::cout <<
 				// if key does not exist is tree i return root
-				return ft::make_pair<iterator, bool>(iterator(&toto->data), true);
+				return ft::make_pair<iterator, bool>(iterator(&toto->data, _AVL.root), true);
 			}
 			// with hint (2) i.e pos
-			iterator	insert (iterator position, const value_type& val);
+			iterator	insert (iterator position, const value_type& val){
+				ft::pair<iterator, bool> ret = insert(val);
+				return ret.first;
+			}
 			// range(3)
 			template <class InputIterator>
 				void	insert (InputIterator first, InputIterator last){
+					// std::cout << "HERE" << std::endl;
 					while (first != last){
 						insert(*first);
 						first++;
@@ -179,6 +200,8 @@ namespace ft
 		// CLEAR
 			void clear(){
 				_AVL.tree_free(_AVL.root);
+				// std::cout << "Clear: " << _AVL.root->right << " " << _AVL.root->left << std::endl;
+				_AVL.root = 0x0;
 				_size = 0;
 			}
 
@@ -187,17 +210,20 @@ namespace ft
 				key_compare comp;
 				return comp;
 			}
-//			value_compare	value_comp(void) const;
+			value_compare	value_comp(void) const{
+				value_compare comp(key_comp());
+				return comp;
+			}
 
 		// OPERATIONS
 			iterator	find (const key_type& k){
-				return iterator(&(_AVL.tree_search(_AVL.root, ft::make_pair(k,k))->data), _AVL);
+				return iterator(&(_AVL.tree_search(_AVL.root, ft::make_pair(k,mapped_type()))->data), _AVL.root);
 			}
 			const_iterator	find (const key_type& k) const{
-				return const_iterator(&(_AVL.tree_search(_AVL.root, ft::make_pair(k,mapped_type()))->data), _AVL);
+				return const_iterator(&(_AVL.tree_search(_AVL.root, ft::make_pair(k,mapped_type()))->data), _AVL.root);
 			}
 			size_type	count (const key_type& k) const{
-				iterator it = iterator(&(_AVL.tree_search(_AVL.root, ft::make_pair(k,mapped_type()))->data), _AVL);
+				iterator it = iterator(&(_AVL.tree_search(_AVL.root, ft::make_pair(k,mapped_type()))->data), _AVL.root);
 				if (it.get_ptr() != 0x0)
 					return 1;
 				return 0;
@@ -212,7 +238,7 @@ namespace ft
 				return end();
 			}
 			const_iterator	lower_bound(const key_type& k) const{
-				for (iterator it = begin(); it != end(); it++)
+				for (const_iterator it = begin(); it != end(); it++)
 				{
 					if (key_comp()(it->first, k) == false){
 						return const_iterator(it);
@@ -230,7 +256,7 @@ namespace ft
 				return end();
 			}
 			const_iterator	upper_bound(const key_type& k) const{
-				for (iterator it = begin(); it != end(); it++)
+				for (const_iterator it = begin(); it != end(); it++)
 				{
 					if (key_comp()(k, it->first) == true){
 						return const_iterator(it);
@@ -240,7 +266,7 @@ namespace ft
 			}
 			ft::pair<const_iterator,const_iterator> equal_range(const key_type& k)
 				const{
-					return make_pair(lower_bound(k), upper_bound(k));
+					return ft::make_pair(lower_bound(k), upper_bound(k));
 				}
 			ft::pair<iterator,iterator>	equal_range(const key_type& k){
 				return ft::make_pair<iterator, iterator>(lower_bound(k), upper_bound(k));

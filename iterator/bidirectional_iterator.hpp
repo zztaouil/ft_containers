@@ -15,23 +15,23 @@ namespace ft
 			typedef ptrdiff_t	difference_type;
 			typedef T*		pointer;
 			typedef T&		reference;
-			typedef tree<value_type, Compare>	Tree;
-			typedef typename Tree::Node	Node;
+			typedef node<T>	Node;
+
 		// default constructor
-		bidirectional_iterator(void) : _ptr(0), _myTree(){};
+		bidirectional_iterator(void) : _ptr(0), comp(){};
 		// copy constructor
 		bidirectional_iterator(bidirectional_iterator const &obj){
 			*this = obj;
 		}
 		// parametric constructor takes a pointer
 		bidirectional_iterator(pointer ptr) :
-			_ptr(ptr){}
-		// parametric constructor takes both a pointer and atree
-		bidirectional_iterator(pointer ptr, Tree const &tree) :
-			_ptr(ptr), _myTree(tree){}
+			_ptr(ptr), comp(){}
+		// parametric constructor takes both a pointer and a root pointer of tree
+		bidirectional_iterator(pointer ptr, node<T> * const tree) :
+			_ptr(ptr), _myTree(tree), comp(){}
 		// assignement overload
-		bidirectional_iterator&	operator=(bidirectional_iterator const&
-				rhs){
+		bidirectional_iterator&	operator=(bidirectional_iterator const
+				&rhs){
 			if (this != &rhs){
 				// shallow copy, imma test later.
 				this->_ptr = rhs._ptr;
@@ -42,15 +42,15 @@ namespace ft
 		// destructor
 		~bidirectional_iterator(void){}
 		// rvalue dereference operators * and ->
-		pointer	operator ->(void){return _ptr;}
-		reference operator *(void){return *_ptr;}
+		pointer	operator ->(void) const{return _ptr;}
+		reference operator *(void) const{return *_ptr;}
 		
 		// increment
 		bidirectional_iterator	operator++(int){
 			bidirectional_iterator tmp = *this;
-			Node* successor = _myTree.tree_successor(
-					_myTree.tree_search(
-						_myTree.root, *_ptr));
+			Node* successor = _successor(
+					_search(
+						_myTree, *_ptr));
 			if (successor != NULL)
 				_ptr = &(successor->data);			
 			else
@@ -58,9 +58,9 @@ namespace ft
 			return tmp;
 		}
 		bidirectional_iterator	operator++(void){
-			Node* successor = _myTree.tree_successor(
-					_myTree.tree_search(
-						_myTree.root, *_ptr));
+			Node* successor = _successor(
+					_search(
+						_myTree, *_ptr));
 			if (successor != NULL)
 				_ptr = &(successor->data);			
 			else
@@ -74,12 +74,12 @@ namespace ft
 //				<< std::endl;
 
 			if (_ptr == 0x0){
-				_ptr = &(_myTree.tree_max(_myTree.root)->data);
+				_ptr = &(_max(_myTree)->data);
 				return tmp;
 			}
-			Node* predecessor = _myTree.tree_predecessor(
-				_myTree.tree_search(
-					_myTree.root, *_ptr)
+			Node* predecessor = _predecessor(
+				_search(
+					_myTree, *_ptr)
 					);
 			if (predecessor != NULL)
 				_ptr = &(predecessor->data);
@@ -89,12 +89,12 @@ namespace ft
 		}
 		bidirectional_iterator operator--(void){
 			if (_ptr == 0x0){
-				_ptr = &(_myTree.tree_max(_myTree.root)->data);
+				_ptr = &(_max(_myTree)->data);
 				return *this;
 			}
-			Node* predecessor = _myTree.tree_predecessor(
-				_myTree.tree_search(
-					_myTree.root, *_ptr)
+			Node* predecessor = _predecessor(
+				_search(
+					_myTree, *_ptr)
 					);
 			if (predecessor != NULL)
 				_ptr = &(predecessor->data);
@@ -102,17 +102,58 @@ namespace ft
 				_ptr = 0x0;
 			return *this;
 		}
+		// tree maximum
+		Node	*_max(Node* x){
+			while (x->right != NULL)
+				x = x->right;
+			return x;
+		}
+		// tree minimum
+		Node	*_min(Node* x) const{
+			while (x->left != NULL)
+				x = x->left;
+			return x;
+		}
+		// tree successor
+		Node*	_successor(Node* x){
+			if (x->right != NULL)
+				return _min(x->right);
+			Node* y = x->parent;
+			while (y != NULL && x == y->right){
+				x = y;
+				y = y->parent;
+			}
+			return y;
+		}
+		// tree predecessor
+		Node*	_predecessor(Node* x){
+			if (x->left != NULL)
+				return _max(x->left);
+			Node* y = x->parent;
+			while (y != NULL && x == y->left){
+				x = y;
+				y = y->parent;
+			}
+			return y;
+		}
+		Node*	_search(Node* x, value_type key) const{
+			if (x == NULL || key.first == x->data.first)
+				return x;
+			if (comp(key.first, x->data.first))
+				return _search(x->left , key);
+			else
+				return _search(x->right, key);
+		}
 		// Conversion operator
 		operator bidirectional_iterator<const T, Compare>() const{
-			return bidirectional_iterator<const T, Compare>(_ptr, _myTree);
+			return bidirectional_iterator<const T, Compare>(_ptr, reinterpret_cast<node<const T>*>(_myTree));
 		}
+
 		pointer get_ptr(void){ return _ptr;}
-		void	set_Tree(Tree const &tr){
-			_myTree = tr;
-		}
 		private:
 			pointer	_ptr;
-			Tree	_myTree;
+			Node*	_myTree;
+			Compare comp;
 		};
 	// Non member overloads
 	// comparison

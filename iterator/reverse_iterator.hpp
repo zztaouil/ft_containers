@@ -1,5 +1,5 @@
-#ifndef REVERSE_ITERATOR_HPP
-# define REVERSE_ITERATOR_HPP
+#ifndef reverse_iterator_HPP
+# define reverse_iterator_HPP
 
 # include "iterator_traits.hpp"
 # include "random_access_iterator.hpp"
