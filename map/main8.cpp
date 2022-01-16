@@ -57,7 +57,7 @@ bool   testmapConstructors()
     // cond = fifth.size() == m_fifth.size() && cond && comparemaps(fifth.begin(), fifth.end(), m_fifth.begin(), m_fifth.end());
 
     std::cout << first.size() << " " << m_first.size() << std::endl;
-    
+
     first = std::map<char, int>();
     m_first = ft::map<char, int>();
 
@@ -70,8 +70,14 @@ bool   testmapConstructors()
 
 int     main()
 {
-    std::cout << testmapConstructors() << std::endl;
+    ft::map<int, int> mymap;
 
+    for (int i = 0; i < 10; i++){
+        mymap.insert(ft::make_pair(i, i*2));
+    }
+
+    mymap.debug();
+    mymap.erase(mymap.begin(), mymap.end());
 
     return 0;
 }

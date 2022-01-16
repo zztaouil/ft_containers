@@ -12,6 +12,7 @@
 # include "../iterator/reverse_iterator.hpp"
 # include "../iterator/lexico_compare.hpp"
 # include "../iterator/equal.hpp"
+# include <vector>
 # include "pair.hpp"
 # include "AVL.hpp"
 
@@ -175,19 +176,27 @@ namespace ft
 			}
 			// (2)
 			size_type erase (const key_type& k){
+				Node* nd = _AVL.tree_search(
+						_AVL.root,
+						ft::make_pair(k, mapped_type()));
+				if (nd == 0)
+					return 0;
 				_AVL.tree_delete(
 					&_AVL.root,
-					_AVL.tree_search(
-						_AVL.root,
-						ft::make_pair(k, mapped_type()))
+					nd
 					);
 				_size--;
 				return 1;
 			}
 			// (3)
 			void	erase (iterator first, iterator last){
+				// solution khanza imma come back later
+				std::vector<iterator> vec;
 				while (first != last){
-					this->erase(first++);
+					vec.push_back(first++);
+				}
+				for (size_t i = 0; i<vec.size(); i++){
+					erase(vec[i]);
 				}
 			}
 
