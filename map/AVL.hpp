@@ -1,6 +1,7 @@
 #ifndef AVL_HPP
 # define AVL_HPP
 
+# define ABS(n) ((n<0)?(-n):(n))
 # include "pair.hpp"
 # include <memory>
 # include <iostream>
@@ -14,13 +15,15 @@ namespace ft
 			node* right;
 			node* parent;
 			// balance factor
-			int	bf;
+			int		bf;
+			size_t  height;
 			node (const node & obj){
 				data = obj.data;
 				left = obj.left;
 				right = obj.right;
 				parent = obj.parent;
 				bf = obj.bf;
+				height = obj.height;
 				return *this;
 			}
 			operator node<const T>() const{
@@ -34,10 +37,14 @@ namespace ft
 			typedef U	Data;
 			typedef Alloc	allocator_type1;
 			typedef Compare key_compare;
+
 			// not working on my computer
 //			typedef typename allocator_type1::template rebind<Node>::other allocator_type2;
 			// hotfix
 			typedef std::allocator<Node> allocator_type2;
+
+//
+//
 
 
 			tree(const allocator_type1& alloc = allocator_type1())
@@ -53,7 +60,18 @@ namespace ft
 				}
 				return *this;
 			}
-//			}
+//			utility
+			size_t	max(size_t a, size_t b){
+				return (a<b ? b : a);
+			}
+			size_t	height(Node* node){
+				if (node == NULL)
+					return 0;
+				return node->height;
+			}
+			int		BF(Node* node){
+				return height(node->right) - height(node->left);
+			}
 			// construct new node
 			Node*	node_new(Data Data, Node* Parent){
 				Node* node = allocator2.allocate(1);
@@ -62,6 +80,7 @@ namespace ft
 				node->parent = Parent;
 				allocator1.construct(&node->data, Data);
 				node->bf = 0;
+				node->height = 1;
 				return node;
 			}
 			// search
@@ -74,31 +93,55 @@ namespace ft
 					return tree_search(x->right, key);
 			}
 			// insertion
-			Node*	insert_ext(Node** Root, Data data){
+			pair<Node*,bool>	insert_ext(Node** Root, Data data){
 				Node*	y = NULL;
 				Node*	x = *Root;
+				int ht = 0;
 				while (x != NULL){
 					y = x;
 					if (comp(data.first, x->data.first))
 						x = x->left;
+					else if (data.first == x->data.first)
+						return ft::make_pair(x, false);
 					else
 						x = x->right;
+					ht++;
 				}
 				Node* z = node_new(data, y);
-				if (y == NULL)
+				if (y == NULL){
 					*Root = z;
-				else if (comp(z->data.first, y->data.first))
+				}
+				else if (comp(z->data.first, y->data.first)){
 					y->left = z;
-				else
+				}
+				else{
 					y->right = z;
-				return z;
+				}
+				// but first update the parent of the newly inserted node
+				// then
+				// retrace from it to root in order to update the balance factor
+				//  by substraction the right child bf from left child bf
+				if (y != NULL){
+                    Node *m = y;
+					int nb = 0;
+					while (m != NULL) {
+						m->height = max(height(m->right), height(m->left)) + 1;
+						m->bf = BF(m);
+						nb = rebalance(m);
+						int iter = 0;
+						while (iter < nb){
+							m = m->parent;
+							iter++;
+						}
+                    	m = m->parent;
+                    }
+                }
+                return ft::make_pair(z, true);
+				
 			}
-			Node*	insert(Node** Root, Data data){
-				Node*	bobo = insert_ext(Root,data);
-				update_bf(*Root);
-				rebalance(*Root);
+			pair<Node*,bool>	insert(Node** Root, Data data){
+				pair<Node*,bool>	bobo = insert_ext(Root,data);
 				return bobo;
-//				std::cerr << "#" << std::endl;
 			}
 			void	update_bf(Node* Root){
 				if (Root == NULL)
@@ -114,7 +157,6 @@ namespace ft
 						return ;
 				tree_delete_ext(T,z);
 				update_bf(*T);
-				rebalance(*T);
 			}
 			// can't delete root of tree? why? FIXED
 			void	tree_delete_ext(Node** T, Node* z){
@@ -220,34 +262,37 @@ namespace ft
 			// of 2 nay arise, which means that the parent subtree has to be
 			// "rebalanced". The given repair tools are the so-called "tree rotations"
 			// yep something is broken
-			void	rebalance(Node* Root){
-				if (Root == NULL)
-					return ;
+			int	rebalance(Node* Root){
+				// if (Root == NULL)
+				// 	return ;
 
-				rebalance(Root->left);
-				rebalance(Root->right);
+				// rebalance(Root->left);
+				// rebalance(Root->right);
 //				std::cerr << Root << " " << Root->data << " " << Root->bf << std::endl;
-				if (Root->bf >= 2 && Root->right->bf >= 0){
+				// std::cout << "Call to rebalance with bf=" << Root->bf ; 
+				if (Root->bf == 2 && Root->right->bf >= 0){
 //					std::cerr << "left rot " << Root->data << " " << Root->right->data << " " << Root->bf << std::endl;
 					rotate_left(Root, Root->right);
-					return ;
+					return 1;
 				}
-				if (Root->bf <= -2 && Root->left->bf <= 0){
+				else if (Root->bf == -2 && Root->left->bf <= 0){
 //					std::cerr << "right rot " << Root->data << " " << Root->left->data << std::endl;
 					rotate_right(Root, Root->left);
-					return ;
+					return 1;
 				}
-				if (Root->bf >= 2 && Root->right->bf <= 0){
+				else if (Root->bf == 2 && Root->right->bf <= 0){
 					rotate_right(Root->right, Root->right->left);
 					rotate_left(Root, Root->right);
-					return ;
+					return 2;
 				}
-				if (Root->bf <= -2 && Root->left->bf >= 0){
+				else if (Root->bf == -2 && Root->left->bf >= 0){
 					rotate_left(Root->left, Root->left->right);
 					rotate_right(Root, Root->left);
-					return ;
+					return 2;
 				}
-		}
+				return 0;
+			}
+
 			// rotate left bf +2
 			Node*	rotate_left(Node* X, Node* Z){
 				Node* papa = X->parent;
@@ -268,10 +313,11 @@ namespace ft
 					papa->right = Z;
 				if (papa && papa->left == X)
 					papa->left = Z;
-				Z->bf = tree_height(Z->right) -
-					tree_height(Z->left);
-				X->bf = tree_height(X->right) -
-					tree_height(X->left);
+
+				X->height = max(height(X->right), height(X->left)) + 1;
+				Z->height = max(height(Z->right), height(Z->left)) + 1;
+				X->bf = BF(X);
+				Z->bf = BF(X);
 				return Z;
 				// parent of X right node should be pointing to Z;
 				// X should be replaced by Z in root node.
@@ -295,10 +341,15 @@ namespace ft
 					papa->right = Z;
 				if (papa && papa->left == X)
 					papa->left = Z;
-				Z->bf = tree_height(Z->right) -
-					tree_height(Z->left);
-				X->bf = tree_height(X->right) -
-					tree_height(X->left);
+				X->height = max(height(X->right), height(X->left)) + 1;
+				Z->height = max(height(Z->right), height(Z->left)) + 1;
+
+				X->bf = BF(X);
+				Z->bf = BF(X);
+				// Z->bf = tree_height(Z->right) -
+				// 	tree_height(Z->left);
+				// X->bf = tree_height(X->right) -
+				// 	tree_height(X->left);
 				return Z;
 			}
 			/*======================================================*/
@@ -309,7 +360,7 @@ namespace ft
 				{
 					std::cout << prefix;
 					std::cout << (isLeft?"├──" : "└──");
-					std::cout << "|" << node->data << ":" << node << std::endl;
+					std::cout << "|" << node->data << ":" << node->height << std::endl;
 
 					tree_debug(prefix+(isLeft?"│   "
 								: "    "),

@@ -137,15 +137,16 @@ namespace ft
 		// MODIFIERS
 			// single elemet (1)
 			ft::pair<iterator, bool> insert (const value_type& val){
-				node<value_type>*	ret = _AVL.tree_search(_AVL.root, val);
-				if (ret != NULL)
-					return ft::make_pair<iterator, bool>
-						(iterator(&ret->data, _AVL.root), false);
-				Node* toto = _AVL.insert(&_AVL.root, val);
-				_size++;
-				// std::cout <<
-				// if key does not exist is tree i return root
-				return ft::make_pair<iterator, bool>(iterator(&toto->data, _AVL.root), true);
+//				node<value_type>*	ret = _AVL.tree_search(_AVL.root, val);
+//				if (ret != NULL)
+//					return ft::make_pair<iterator, bool>
+//						(iterator(&ret->data, _AVL.root), false);
+				pair<Node*,bool> toto = _AVL.insert(&_AVL.root, val);
+				if (toto.second != false){
+					_size++;
+					return ft::make_pair<iterator, bool>(iterator(&toto.first->data, _AVL.root), true);
+				}
+				return ft::make_pair<iterator, bool>(iterator(&toto.first->data, _AVL.root), false);
 			}
 			// with hint (2) i.e pos
 			iterator	insert (iterator position, const value_type& val){
