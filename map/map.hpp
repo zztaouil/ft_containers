@@ -15,6 +15,7 @@
 # include <vector>
 # include "pair.hpp"
 # include "AVL.hpp"
+# include "../stack/stack.hpp"
 
 namespace ft
 {
@@ -96,20 +97,19 @@ namespace ft
 		// ITERATORS
 			iterator	begin(void) noexcept{
 				// std::cout << "Non const begin" << std::endl;
-				Node* ret = _AVL.tree_min(_AVL.root);
-				if (ret != NULL)
-					return iterator(&(_AVL.tree_min(_AVL.root)->data), _AVL.root);
-				return iterator(0x0, _AVL.root);
+				Node* curr = _AVL.tree_min(_AVL.root);
+				return iterator(&(curr->data), _AVL.root, curr);
 			}
 			const_iterator	begin(void) const noexcept{
 				// std::cout << "const begin" << std::endl;
-				return const_iterator(&(_AVL.tree_min(_AVL.root)->data), reinterpret_cast<node<const value_type>*>(_AVL.root));
+				Node* curr = _AVL.tree_min(_AVL.root);
+				return const_iterator(&(curr->data), reinterpret_cast<node<const value_type>*>(_AVL.root), reinterpret_cast<node<const value_type>*>(curr));
 			}
 			iterator	end(void) {
-				return iterator(0x0, _AVL.root);
+				return iterator(0x0, _AVL.root, 0x0);
 			}
 			const_iterator	end(void) const{
-				return const_iterator(0x0, reinterpret_cast<node<const value_type>*>(_AVL.root));
+				return const_iterator(0x0, reinterpret_cast<node<const value_type>*>(_AVL.root), 0x0);
 			}
 			reverse_iterator	rbegin(void){
 				return reverse_iterator(end());
@@ -144,9 +144,9 @@ namespace ft
 				pair<Node*,bool> toto = _AVL.insert(&_AVL.root, val);
 				if (toto.second != false){
 					_size++;
-					return ft::make_pair<iterator, bool>(iterator(&toto.first->data, _AVL.root), true);
+					return ft::make_pair<iterator, bool>(iterator(&toto.first->data, _AVL.root, toto.first), true);
 				}
-				return ft::make_pair<iterator, bool>(iterator(&toto.first->data, _AVL.root), false);
+				return ft::make_pair<iterator, bool>(iterator(&toto.first->data, _AVL.root, toto.first), false);
 			}
 			// with hint (2) i.e pos
 			iterator	insert (iterator position, const value_type& val){
@@ -165,7 +165,8 @@ namespace ft
 		// ERASE
 			// (1)
 			void	erase(iterator position){
-				// tree_delete
+				if (position.get_ptr() == 0x0)
+					return ;
 				_AVL.tree_delete(
 						&_AVL.root,
 						_AVL.tree_search(
@@ -227,52 +228,40 @@ namespace ft
 
 		// OPERATIONS
 			iterator	find (const key_type& k){
-				return iterator(&(_AVL.tree_search(_AVL.root, ft::make_pair(k,mapped_type()))->data), _AVL.root);
+				Node* nd = _AVL.tree_search(_AVL.root, ft::make_pair(k,mapped_type()));
+				return iterator(&(nd->data), _AVL.root, nd);
 			}
 			const_iterator	find (const key_type& k) const{
-				return const_iterator(&(_AVL.tree_search(_AVL.root, ft::make_pair(k,mapped_type()))->data), _AVL.root);
+				Node* nd = _AVL.tree_search(_AVL.root, ft::make_pair(k,mapped_type()));
+				return const_iterator(&(nd->data), reinterpret_cast<node<const value_type>*>(_AVL.root), reinterpret_cast<node<const value_type>*>(nd));
 			}
 			size_type	count (const key_type& k) const{
-				iterator it = iterator(&(_AVL.tree_search(_AVL.root, ft::make_pair(k,mapped_type()))->data), _AVL.root);
+				iterator it = iterator(&(_AVL.tree_search(_AVL.root, ft::make_pair(k,mapped_type()))->data), _AVL.root, _AVL.root);
 				if (it.get_ptr() != 0x0)
 					return 1;
 				return 0;
 			}
 			iterator	lower_bound(const key_type& k){
-				for (iterator it = begin(); it != end(); it++)
-				{
-					if (key_comp()(it->first, k) == false){
-						return it;
-					}
-				}
-				return end();
+				iterator it = find(k);
+				if (it.get_ptr() != 0x0)
+					return it;
+				Node* succes = _successor(k);
+				return iterator(&(succes->data), _AVL.root, succes);
 			}
 			const_iterator	lower_bound(const key_type& k) const{
-				for (const_iterator it = begin(); it != end(); it++)
-				{
-					if (key_comp()(it->first, k) == false){
-						return const_iterator(it);
-					}
-				}
-				return end();
+				const_iterator cit = find(k);
+				if (cit.get_ptr() != 0x0)
+					return cit;
+				Node* succes = _successor(k);
+				return const_iterator(&(succes->data), reinterpret_cast<node<const value_type>*>(_AVL.root), reinterpret_cast<node<const value_type>*>(succes));
 			}
 			iterator	upper_bound(const key_type& k){
-				for (iterator it = begin(); it != end(); it++)
-				{
-					if (key_comp()(k, it->first) == true){
-						return iterator(it);
-					}
-				}
-				return end();
+				Node* succes = _successor(k);
+				return iterator(&(succes->data), _AVL.root, succes);
 			}
 			const_iterator	upper_bound(const key_type& k) const{
-				for (const_iterator it = begin(); it != end(); it++)
-				{
-					if (key_comp()(k, it->first) == true){
-						return const_iterator(it);
-					}
-				}
-				return end();
+				Node* succes = _successor(k);
+				return const_iterator(&(succes->data), reinterpret_cast<node<const value_type>*>(_AVL.root),reinterpret_cast<node<const value_type>*>(succes));
 			}
 			ft::pair<const_iterator,const_iterator> equal_range(const key_type& k)
 				const{
@@ -294,6 +283,20 @@ namespace ft
 			tree<value_type, key_compare>	_AVL;
 			allocator_type	_allocator;
 			size_type	_size;
+
+			Node* _successor( const key_type& key ) const{
+                Node * successor = nullptr;
+				Node * root = this->_AVL.root;
+				while (root != nullptr) {
+					if (key_compare()(key, root->data.first)) {
+						successor = root;
+						root = root->left;
+					}
+					else if (!key_compare()(key, root->data.first))
+						root = root->right;
+				}
+				return (successor);
+            }
 		};
 
 	template < class Key, class T>

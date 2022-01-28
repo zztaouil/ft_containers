@@ -27,8 +27,8 @@ namespace ft
 		bidirectional_iterator(pointer ptr) :
 			_ptr(ptr), comp(){}
 		// parametric constructor takes both a pointer and a root pointer of tree
-		bidirectional_iterator(pointer ptr, node<T> * const tree) :
-			_ptr(ptr), _myTree(tree), comp(){}
+		bidirectional_iterator(pointer ptr, node<T> * const tree, node<T>* currentnode) :
+			_ptr(ptr), _myTree(tree),_currentNode(currentnode), comp(){}
 		// assignement overload
 		bidirectional_iterator&	operator=(bidirectional_iterator const
 				&rhs){
@@ -36,6 +36,7 @@ namespace ft
 				// shallow copy, imma test later.
 				this->_ptr = rhs._ptr;
 				this->_myTree = rhs._myTree;
+				this->_currentNode = rhs._currentNode;
 			}
 			return *this;
 		}
@@ -49,22 +50,28 @@ namespace ft
 		bidirectional_iterator	operator++(int){
 			bidirectional_iterator tmp = *this;
 			Node* successor = _successor(
-					_search(
-						_myTree, *_ptr));
-			if (successor != NULL)
+					_currentNode);
+			if (successor != NULL){
 				_ptr = &(successor->data);			
-			else
+				_currentNode = successor;
+			}
+			else{
 				_ptr = 0x0;
+				_currentNode = 0x0;
+			}
 			return tmp;
 		}
 		bidirectional_iterator	operator++(void){
 			Node* successor = _successor(
-					_search(
-						_myTree, *_ptr));
-			if (successor != NULL)
+						_currentNode);
+			if (successor != NULL){
+				_currentNode = successor;
 				_ptr = &(successor->data);			
-			else
+			}
+			else{
 				_ptr = 0x0;
+				_currentNode = 0x0;
+			}
 			return *this;
 		}
 		// decrement
@@ -74,32 +81,40 @@ namespace ft
 //				<< std::endl;
 
 			if (_ptr == 0x0){
-				_ptr = &(_max(_myTree)->data);
+				Node* t = _max(_myTree);
+				_ptr = &(t->data);
+				_currentNode = t;
 				return tmp;
 			}
 			Node* predecessor = _predecessor(
-				_search(
-					_myTree, *_ptr)
-					);
-			if (predecessor != NULL)
+					_currentNode);
+			if (predecessor != NULL){
 				_ptr = &(predecessor->data);
-			else
+				_currentNode = predecessor;
+			}
+			else{
 				_ptr = 0x0;
+				_currentNode = 0x0;
+			}
 			return tmp;
 		}
 		bidirectional_iterator operator--(void){
 			if (_ptr == 0x0){
-				_ptr = &(_max(_myTree)->data);
+				Node* t = _max(_myTree);
+				_ptr = &(t->data);
+				_currentNode = t;
 				return *this;
 			}
 			Node* predecessor = _predecessor(
-				_search(
-					_myTree, *_ptr)
-					);
-			if (predecessor != NULL)
+					_currentNode);
+			if (predecessor != NULL){
 				_ptr = &(predecessor->data);
-			else
+				_currentNode = predecessor;
+			}
+			else{
 				_ptr = 0x0;
+				_currentNode = 0x0;
+			}
 			return *this;
 		}
 		// tree maximum
@@ -146,13 +161,15 @@ namespace ft
 		}
 		// Conversion operator
 		operator bidirectional_iterator<const T, Compare>() const{
-			return bidirectional_iterator<const T, Compare>(_ptr, reinterpret_cast<node<const T>*>(_myTree));
+			return bidirectional_iterator<const T, Compare>(_ptr, reinterpret_cast<node<const T>*>(_myTree), reinterpret_cast<node<const T>*>(_currentNode));
 		}
 
 		pointer get_ptr(void){ return _ptr;}
+		void	debugg(void){std::cout << _ptr << std::endl;std::cout << _currentNode << std::endl;}
 		private:
 			pointer	_ptr;
 			Node*	_myTree;
+			Node*	_currentNode;
 			Compare comp;
 		};
 	// Non member overloads
