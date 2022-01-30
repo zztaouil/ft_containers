@@ -15,6 +15,8 @@
 # include "../iterator/equal.hpp"
 # include "../iterator/lexico_compare.hpp"
 # include "../iterator/enable_if.hpp"
+# include "../iterator/is_integral.hpp"
+
 namespace ft{
 	template <class T, class Allocator = std::allocator<T> >
 		class	vector{
@@ -77,7 +79,7 @@ namespace ft{
 
 			template <class InputIterator>
 				vector(InputIterator begin, InputIterator end,
-						typename ft::enable_if<!std::is_integral<InputIterator>::value, const allocator_type&>::type = allocator_type())
+						typename ft::enable_if<!ft::is_integral<InputIterator>::value, const allocator_type&>::type = allocator_type())
 				: _allocator(allocator_type()), _size(0), _capacity(0){
 //					std::cerr << "vector range contructor" << std::endl;
 					difference_type d = std::distance(begin, end);
@@ -166,7 +168,6 @@ namespace ft{
 			void	reserve(size_type n){
 				// This function causes the container to reallocate its storage increasing its capacity to n (or greater)?
 				if (n > max_size()){
-					// std::cerr << n << " " << max_size() << std::endl;
 					throw std::length_error("length_error");
 				}
 				if (!n){
@@ -284,7 +285,6 @@ namespace ft{
 						_allocator.construct(_data + i, *first++);
 					_size = static_cast<size_type>(d);
 				}
-			// ;
 			void	push_back(value_type const &val){
 				if (_capacity == 0)
 					reserve(1);
@@ -342,20 +342,15 @@ namespace ft{
 					_size += n;
 				}
 				else if (static_cast<size_type>(d) < _size){
-					// std::cout << "hna?" << std::endl;
 					for (size_type i = _size + n - 1; i >= (static_cast<size_type>(d) + n); i--){
-						// std::cout << _data[i-n] << std::endl;
 						_allocator.construct(_data + i, _data[i - n]);
 					}
 					for (size_type i = static_cast<size_type>(d); i < (static_cast<size_type>(d) + n); i++){
-						// std::cout << i << std::endl;
 						if (i < _size){
-							// std::cout << "$" << _data[i] << std::endl;
 							_allocator.destroy(_data + i);
 						}
 						_allocator.construct(_data + i, val);
 					}
-					// std::cout << "hna!" << std::endl;
 
 					_size += n;
 				}
@@ -363,7 +358,7 @@ namespace ft{
 			}
 			template <class InputIterator>
 				void		insert (iterator position, InputIterator first, InputIterator last,
-						typename ft::enable_if<!std::is_integral<InputIterator>::value,
+						typename ft::enable_if<!ft::is_integral<InputIterator>::value,
 						InputIterator>::type = InputIterator()){
 					difference_type d = std::distance(begin(), position);
 					difference_type l = std::distance(first, last);
