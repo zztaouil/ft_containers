@@ -165,6 +165,7 @@ namespace ft
 		}
 
 		pointer get_ptr(void){ return _ptr;}
+		Node*	get_node(void) {return _currentNode;}
 		void	debugg(void){std::cout << _ptr << std::endl;std::cout << _currentNode << std::endl;}
 		private:
 			pointer	_ptr;

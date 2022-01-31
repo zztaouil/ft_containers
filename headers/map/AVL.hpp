@@ -1,8 +1,7 @@
 #ifndef AVL_HPP
 # define AVL_HPP
 
-# define ABS(n) ((n<0)?(-n):(n))
-# include "pair.hpp"
+# include "../utility/pair.hpp"
 # include <memory>
 # include <iostream>
 
@@ -38,21 +37,17 @@ namespace ft
 				typedef Alloc	allocator_type1;
 				typedef Compare key_compare;
 
-				// not working on my computer
-				//			typedef typename allocator_type1::template rebind<Node>::other allocator_type2;
-				// hotfix
-				typedef std::allocator<Node> allocator_type2;
+				typedef typename allocator_type1::template rebind<Node>::other allocator_type2;
+				// typedef std::allocator<Node> allocator_type2;
 
 				//
 				//
 
 
 				tree(const allocator_type1& alloc = allocator_type1())
-					:allocator1(alloc), allocator2(allocator_type2()), root(0), comp(){
-						//					std::cout << "Tree constructor" << std::endl;
+					:root(0), allocator1(alloc), allocator2(allocator_type2()), comp(){
 					}
 				~tree(void){
-					//				std::cout << "tree destructor" << std::endl;
 				}
 				tree& operator=(tree const &rhs){
 					if (this != &rhs){
@@ -147,7 +142,6 @@ namespace ft
 						return ;
 					tree_delete_ext(T,z);
 				}
-				// can't delete root of tree? why? FIXED
 				void	tree_delete_ext(Node** T, Node* z){
 					Node* tmp = tree_predecessor(z);
 					if (z->left == NULL)
@@ -260,20 +254,11 @@ namespace ft
 				// "rebalanced". The given repair tools are the so-called "tree rotations"
 				// yep something is broken
 				int	rebalance(Node* Root){
-					// if (Root == NULL)
-					// 	return ;
-
-					// rebalance(Root->left);
-					// rebalance(Root->right);
-					//				std::cerr << Root << " " << Root->data << " " << Root->bf << std::endl;
-					// std::cout << "Call to rebalance with bf=" << Root->bf ; 
 					if (Root->bf == 2 && Root->right->bf >= 0){
-						//					std::cerr << "left rot " << Root->data << " " << Root->right->data << " " << Root->bf << std::endl;
 						rotate_left(Root, Root->right);
 						return 1;
 					}
 					else if (Root->bf == -2 && Root->left->bf <= 0){
-						//					std::cerr << "right rot " << Root->data << " " << Root->left->data << std::endl;
 						rotate_right(Root, Root->left);
 						return 1;
 					}

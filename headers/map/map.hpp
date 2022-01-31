@@ -8,14 +8,13 @@
 # include <iostream>
 # include <type_traits>
 # include <algorithm>
+# include <vector>
 # include "../iterator/bidirectional_iterator.hpp"
 # include "../iterator/reverse_iterator.hpp"
-# include "../iterator/lexico_compare.hpp"
-# include "../iterator/equal.hpp"
-# include <vector>
-# include "pair.hpp"
+# include "../utility/lexico_compare.hpp"
+# include "../utility/equal.hpp"
+# include "../utility/pair.hpp"
 # include "AVL.hpp"
-# include "../stack/stack.hpp"
 
 namespace ft
 {
@@ -95,12 +94,12 @@ namespace ft
 			}
 
 		// ITERATORS
-			iterator	begin(void) noexcept{
+			iterator	begin(void) {
 				// std::cout << "Non const begin" << std::endl;
 				Node* curr = _AVL.tree_min(_AVL.root);
 				return iterator(&(curr->data), _AVL.root, curr);
 			}
-			const_iterator	begin(void) const noexcept{
+			const_iterator	begin(void) const {
 				// std::cout << "const begin" << std::endl;
 				Node* curr = _AVL.tree_min(_AVL.root);
 				return const_iterator(&(curr->data), reinterpret_cast<node<const value_type>*>(_AVL.root), reinterpret_cast<node<const value_type>*>(curr));
@@ -137,10 +136,6 @@ namespace ft
 		// MODIFIERS
 			// single elemet (1)
 			ft::pair<iterator, bool> insert (const value_type& val){
-//				node<value_type>*	ret = _AVL.tree_search(_AVL.root, val);
-//				if (ret != NULL)
-//					return ft::make_pair<iterator, bool>
-//						(iterator(&ret->data, _AVL.root), false);
 				pair<Node*,bool> toto = _AVL.insert(&_AVL.root, val);
 				if (toto.second != false){
 					_size++;
@@ -150,13 +145,13 @@ namespace ft
 			}
 			// with hint (2) i.e pos
 			iterator	insert (iterator position, const value_type& val){
+				(void)position;
 				ft::pair<iterator, bool> ret = insert(val);
 				return ret.first;
 			}
 			// range(3)
 			template <class InputIterator>
 				void	insert (InputIterator first, InputIterator last){
-					// std::cout << "HERE" << std::endl;
 					while (first != last){
 						insert(*first);
 						first++;
@@ -169,10 +164,7 @@ namespace ft
 					return ;
 				_AVL.tree_delete(
 						&_AVL.root,
-						_AVL.tree_search(
-							_AVL.root,
-							*position
-							)
+						position.get_node()
 						);
 				_size--;
 			}

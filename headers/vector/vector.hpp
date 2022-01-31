@@ -12,10 +12,10 @@
 # include <type_traits>
 # include "../iterator/random_access_iterator.hpp"
 # include "../iterator/reverse_iterator.hpp"
-# include "../iterator/equal.hpp"
-# include "../iterator/lexico_compare.hpp"
-# include "../iterator/enable_if.hpp"
-# include "../iterator/is_integral.hpp"
+# include "../utility/equal.hpp"
+# include "../utility/lexico_compare.hpp"
+# include "../utility/enable_if.hpp"
+# include "../utility/is_integral.hpp"
 
 namespace ft{
 	template <class T, class Allocator = std::allocator<T> >
