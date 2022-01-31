@@ -6,7 +6,7 @@
 /*   By: mamoussa <mamoussa@student.1337.ma>           +#+      +#++:      +#++:        +#+         */
 /*                                                    +#+         +#+        +#+      +#+           */
 /*   Created: 2021/07/10 19:43:45 by mamoussa        #+#  #+#    #+# #+#    #+#     #+#             */
-/*   Updated: 2021/09/23 12:57:39 by moboustt         ###   ########.fr       */
+/*   Updated: 2022/01/31 11:46:42 by ztaouil          ###   ########.fr       */
 /*                                                                                                  */
 /* ************************************************************************************************ */
 
@@ -27,7 +27,7 @@
 #define RESET "\e[0m"
 
 #define EQUAL(x) ((x) ? (std::cout << "\033[1;32mAC\033[0m\n") : (std::cout << "\033[1;31mWA\033[0m\n"))
-#define TIME_FAC 3 // the ft::vector methods can be slower up to std::vector methods * TIME_FAC (MAX 20)
+#define TIME_FAC 5 // the ft::vector methods can be slower up to std::vector methods * TIME_FAC (MAX 20)
 
 time_t get_time(void)
 {

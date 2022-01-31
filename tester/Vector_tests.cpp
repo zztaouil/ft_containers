@@ -6,7 +6,7 @@
 /*   By: ztaouil <ztaouil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/24 11:32:49 by ibaali            #+#    #+#             */
-/*   Updated: 2022/01/31 10:42:19 by ztaouil          ###   ########.fr       */
+/*   Updated: 2022/01/31 16:57:39 by ztaouil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -2444,5 +2444,6 @@ int main(void)
     reverse_iterator_tests();
     reverse_iterator_with_ft_vector();
     vector_tests();
+	system("leaks vector.out");
     return 0;
 }

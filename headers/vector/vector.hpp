@@ -55,13 +55,12 @@ namespace ft{
 			};
 			// vector::vector
 			explicit vector (const allocator_type& alloc = allocator_type()) :
-				_allocator(alloc), _size(DEFAULT_CAPACITY), _capacity(DEFAULT_CAPACITY){
-					_data = _allocator.allocate(DEFAULT_CAPACITY);
+				_allocator(alloc), _data(0), _size(DEFAULT_CAPACITY), _capacity(DEFAULT_CAPACITY){
 					(void)alloc;
 				}
 			explicit vector (size_type n, const value_type& val = value_type(),
 					const allocator_type& alloc = allocator_type())
-				: _allocator(alloc), _size(0), _capacity(n){
+				: _allocator(alloc), _data(0), _size(0), _capacity(n){
 //					std::cerr << "vector fill constructor" << std::endl;
 					_data = _allocator.allocate(_capacity);
 					for (size_type i=0; i<n; i++){
@@ -80,7 +79,7 @@ namespace ft{
 			template <class InputIterator>
 				vector(InputIterator begin, InputIterator end,
 						typename ft::enable_if<!ft::is_integral<InputIterator>::value, const allocator_type&>::type = allocator_type())
-				: _allocator(allocator_type()), _size(0), _capacity(0){
+				: _allocator(allocator_type()), _data(0), _size(0), _capacity(0){
 //					std::cerr << "vector range contructor" << std::endl;
 					difference_type d = std::distance(begin, end);
 					_size = static_cast<size_type>(d);
@@ -90,19 +89,13 @@ namespace ft{
 						_allocator.construct(_data + i, *begin++);
 					}
 				}
-			vector (const vector& x){
+			vector (const vector& x) : _allocator(allocator_type()), _data(0), _size(0), _capacity(0){
 				*this = x;
 			}
 			// ;
-			void	vector_dest_ext(void){
-				if (_size != 0){
-					for (size_type i = 0; i < _size; i++)
-						_allocator.destroy(_data + i);
-					_size = 0;
-				}
-			}
+
 			// vector::~vector
-			~vector(void){
+			~vector(){
 				vector_dest_ext();
 				if (_capacity != 0){
 					_allocator.deallocate(_data, _capacity);
@@ -110,13 +103,20 @@ namespace ft{
 				}
 			}
 			// ;
-			vector &operator=(vector const &rhs){
+			vector &operator=(const vector &rhs){
+				// std::cout << "assignement overload" << std::endl;
 				if (this != &rhs){
-					_size = rhs.size();
-					_capacity = rhs.capacity();
-					_data = _allocator.allocate(_capacity);
-					for (size_type i=0; i<_size; i++){
+					if(_size > 0){
+						for (size_type i = 0; i < _size; i++){
+							_allocator.destroy(_data + i);
+						}
+					}
+					_size = 0;
+					if (rhs._capacity > _capacity)
+						this->reserve(rhs._capacity);
+					for (size_type i = 0; i < rhs._size; i++){
 						_allocator.construct(_data + i, rhs[i]);
+						_size++;
 					}
 				}
 				return *this;
@@ -128,7 +128,7 @@ namespace ft{
 				return const_iterator(_data);
 			}
 			iterator		begin(void){
-				return iterator(_data);
+				return iterator(_data); 
 			}
 			const_iterator		end(void) const{
 				return const_iterator(_data + _size);
@@ -180,8 +180,7 @@ namespace ft{
 						_allocator.construct(tmp + i, _data[i]);
 						_allocator.destroy(_data + i);
 					}
-					if (!_capacity)	
-						_allocator.deallocate(_data, _capacity);
+					_allocator.deallocate(_data, _capacity);
 					_capacity = n;
 					_data = tmp;
 				}
@@ -448,36 +447,19 @@ namespace ft{
 				return _allocator;
 			}
 
-			// DEBUG
-
-			void	debug(void) const{
-				std::cout << std::setw(40) << std::right << "DEBUG-------------------------------------------------------------------------" 
-					<< std::endl;	
-				std::cout << "_data" << std::endl;	
-				std::cout << "[";
-				if (_size > 1){
-					for (size_type i=0; i < _size-1; i++){
-						std::cout << _data[i] << ", ";
-					}
-				}
-				if (_size > 0){
-					std::cout << _data[_size-1];
-				}
-				std::cout << "]" << std::endl;
-				std::cout << "------------------------------------------------------------------------------" << std::endl;	
-				std::cout << "_size" << std::endl;	
-				std::cout << _size << std::endl;
-				std::cout << "------------------------------------------------------------------------------" << std::endl;	
-				std::cout << "_capacity" << std::endl;	
-				std::cout << _capacity << std::endl;
-				std::cout << std::setw(40) << "==============================================================================" << std::endl;
-			}
-
 		private:
 			allocator_type			_allocator;
 			pointer				_data;
 			size_type			_size;
 			size_type			_capacity;
+
+			void	vector_dest_ext(void){
+				if (_size != 0){
+					for (size_type i = 0; i < _size; i++)
+						_allocator.destroy(_data + i);
+					_size = 0;
+				}
+			}
 		};
 	/*
 	 *	a!=b	!(a==b)

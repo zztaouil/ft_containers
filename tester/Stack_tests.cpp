@@ -6,7 +6,7 @@
 /*   By: mamoussa <mamoussa@student.1337.ma>           +#+      +#++:      +#++:        +#+         */
 /*                                                    +#+         +#+        +#+      +#+           */
 /*   Created: 2021/10/12 12:45:02 by mamoussa        #+#  #+#    #+# #+#    #+#     #+#             */
-/*   Updated: 2021/10/12 12:45:02 by mamoussa     ####### ########   ########      ###.ma           */
+/*   Updated: 2022/01/31 11:53:13 by ztaouil          ###   ########.fr       */
 /*                                                                                                  */
 /* ************************************************************************************************ */
 
@@ -345,6 +345,6 @@ int main()
 
     std::cout << YELLOW << "Testing relational operators;" << RESET << std::endl;
     TEST_CASE(testRelationalOperators);
-
+	system("leaks stack.out");
 	return 0;
 }
